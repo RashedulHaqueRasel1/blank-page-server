@@ -8,6 +8,6 @@ const express_1 = __importDefault(require("express"));
 const auth_1 = __importDefault(require("../../middlewares/auth"));
 const analytics_controller_1 = require("./analytics.controller");
 const router = express_1.default.Router();
-router.post('/track', analytics_controller_1.AnalyticsController.trackVisit);
+router.post('/init', analytics_controller_1.AnalyticsController.trackVisit);
 router.get('/stats', (0, auth_1.default)('ADMIN'), analytics_controller_1.AnalyticsController.getStats);
 exports.AnalyticsRoutes = router;

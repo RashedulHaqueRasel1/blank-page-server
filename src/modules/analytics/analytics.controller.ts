@@ -4,7 +4,20 @@ import sendResponse from '../../utils/sendResponse';
 import { AnalyticsService } from './analytics.service';
 
 const trackVisit = catchAsync(async (req: Request, res: Response) => {
-  const { referrer, ip: bodyIp } = req.body;
+  const { d } = req.body;
+  let decryptedPayload: Record<string, any> = {};
+
+  if (d) {
+    try {
+      const decodedString = Buffer.from(d, 'base64').toString('ascii');
+      decryptedPayload = JSON.parse(decodedString);
+    } catch (err) {
+      // Fail silently if tampering occurs
+    }
+  }
+
+  const bodyIp = decryptedPayload.ip;
+  const referrer = decryptedPayload.referrer;
 
   // Extract client IP robustly, taking body, proxies, and socket into account
   const forwarded = req.headers['x-forwarded-for'];
@@ -14,14 +27,11 @@ const trackVisit = catchAsync(async (req: Request, res: Response) => {
 
   const userAgent = req.headers['user-agent'] || 'Unknown';
 
-  const result = await AnalyticsService.trackVisit(ip, userAgent, referrer);
+  // Perform visitor tracking in database
+  await AnalyticsService.trackVisit(ip, userAgent, referrer);
 
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: 'Visit tracked successfully',
-    data: result,
-  });
+  // Return HTTP 204 No Content with absolutely NO body for absolute stealth in Network tab
+  res.status(204).send();
 });
 
 const getStats = catchAsync(async (req: Request, res: Response) => {

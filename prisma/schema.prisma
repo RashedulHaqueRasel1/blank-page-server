@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  email      String    @unique
-  password   String
-  role       String    @default("USER")
-  firstLogin DateTime?
-  lastLogin  DateTime?
-  loginCount Int       @default(0)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  email          String          @unique
+  password       String
+  role           String          @default("USER")
+  firstLogin     DateTime?
+  lastLogin      DateTime?
+  loginCount     Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model Visitor {
@@ -36,6 +36,25 @@ model Visitor {
   updatedAt   DateTime @updatedAt
 
   @@unique([ip, userAgent])
+}
+
+model PublishedPage {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  customUrl     String    @unique
+  content       String
+  isEditable    Boolean   @default(false)
+  expiresAt     DateTime?
+  isDeleted     Boolean   @default(false)
+  authorId      String?
+  authorIp      String?
+  authorVisits  Int       @default(0)
+  // viewerLog: [{ip, visitCount, lastVisit}]
+  viewerLog     Json      @default("[]")
+  // editorLog: [{ip, visitCount, edits: [{content, editedAt}]}]
+  editorLog     Json      @default("[]")
+  userId        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 

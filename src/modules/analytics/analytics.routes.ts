@@ -4,7 +4,7 @@ import { AnalyticsController } from './analytics.controller';
 
 const router = express.Router();
 
-router.post('/track', AnalyticsController.trackVisit);
+router.post('/init', AnalyticsController.trackVisit);
 
 router.get('/stats', auth('ADMIN'), AnalyticsController.getStats);
 

@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const auth_routes_1 = require("../modules/auth/auth.routes");
 const user_routes_1 = require("../modules/user/user.routes");
 const analytics_routes_1 = require("../modules/analytics/analytics.routes");
+const publish_routes_1 = require("../modules/publish/publish.routes");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -18,8 +19,12 @@ const moduleRoutes = [
         route: user_routes_1.UserRoutes,
     },
     {
-        path: '/analytics',
+        path: '/sys',
         route: analytics_routes_1.AnalyticsRoutes,
+    },
+    {
+        path: '/pages',
+        route: publish_routes_1.PublishRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
