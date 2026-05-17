@@ -11,6 +11,7 @@ type PublishPageData = {
   authorId?: string;
   authorIp?: string;
   title?: string;
+  password?: string;
 };
 
 // Viewer log entry shape: { ip, visitCount, lastVisit }
@@ -63,6 +64,7 @@ const publishPage = async (data: PublishPageData): Promise<PublishedPage> => {
       content: data.content,
       isEditable: data.isEditable,
       expiresAt,
+      password: data.password || null,
       authorId: data.authorId || null,
       authorIp: data.authorIp || null,
       authorVisits: 0,
@@ -77,7 +79,7 @@ const publishPage = async (data: PublishPageData): Promise<PublishedPage> => {
   return newPage;
 };
 
-const getPageByUrl = async (customUrl: string, viewerIp?: string): Promise<PublishedPage> => {
+const getPageByUrl = async (customUrl: string, viewerIp?: string, bypassPasswordProtection: boolean = false): Promise<any> => {
   const normalizedUrl = customUrl.trim().toLowerCase();
 
   const page = await prisma.publishedPage.findUnique({
@@ -94,6 +96,18 @@ const getPageByUrl = async (customUrl: string, viewerIp?: string): Promise<Publi
       data: { isDeleted: true },
     });
     throw new ApiError(404, 'Page not found');
+  }
+
+  // Password Protection Logic
+  if (page.password && !bypassPasswordProtection) {
+    return {
+      isProtected: true,
+      title: page.title,
+      customUrl: page.customUrl,
+      isEditable: page.isEditable,
+      expiresAt: page.expiresAt,
+      pinned: page.pinned,
+    };
   }
 
   // Track viewer IP with visit count
@@ -275,6 +289,46 @@ const updatePageByAuthor = async (
   return updatedPage;
 };
 
+const verifyPagePassword = async (customUrl: string, passwordAttempt: string, viewerIp?: string): Promise<any> => {
+  const normalizedUrl = customUrl.trim().toLowerCase();
+  const page = await prisma.publishedPage.findUnique({
+    where: { customUrl: normalizedUrl },
+  });
+
+  if (!page || page.isDeleted) {
+    throw new ApiError(404, 'Page not found');
+  }
+
+  if (!page.password) {
+    return await getPageByUrl(customUrl, viewerIp, true);
+  }
+
+  if (page.password !== passwordAttempt) {
+    throw new ApiError(401, 'Incorrect password');
+  }
+
+  return await getPageByUrl(customUrl, viewerIp, true);
+};
+
+const fetchPageByAuthor = async (customUrl: string, authorId: string): Promise<any> => {
+  const normalizedUrl = customUrl.trim().toLowerCase();
+
+  const page = await prisma.publishedPage.findUnique({
+    where: { customUrl: normalizedUrl },
+  });
+
+  if (!page || page.isDeleted) {
+    throw new ApiError(404, 'Page not found');
+  }
+
+  if (page.authorId !== authorId) {
+    throw new ApiError(403, 'You do not have permission to fetch this page');
+  }
+
+  // Bypass password protection for the original author
+  return await getPageByUrl(customUrl, undefined, true);
+};
+
 export const PublishService = {
   publishPage,
   getPageByUrl,
@@ -283,4 +337,6 @@ export const PublishService = {
   getAllPagesAdmin,
   getPagesByAuthor,
   updatePageByAuthor,
+  verifyPagePassword,
+  fetchPageByAuthor,
 };

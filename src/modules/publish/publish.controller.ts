@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import ApiError from '../../errors/ApiError';
 
 const publishPage = catchAsync(async (req: Request, res: Response) => {
-  const { customUrl, content, isEditable, expiresHours, authorId, ip, title } = req.body;
+  const { customUrl, content, isEditable, expiresHours, authorId, ip, title, password } = req.body;
 
   // Extract user ID from token if logged in (optional guest support)
   let userId: string | undefined = undefined;
@@ -36,6 +36,7 @@ const publishPage = catchAsync(async (req: Request, res: Response) => {
     authorId,
     authorIp: clientIp,
     title,
+    password,
   });
 
   sendResponse(res, {
@@ -103,7 +104,7 @@ const getAllPagesAdmin = catchAsync(async (req: Request, res: Response) => {
 
 const getPagesByAuthor = catchAsync(async (req: Request, res: Response) => {
   const { authorId } = req.params;
-  const result = await PublishService.getPagesByAuthor(authorId);
+  const result = await PublishService.getPagesByAuthor(authorId as string);
 
   sendResponse(res, {
     statusCode: 200,
@@ -124,7 +125,7 @@ const updatePageByAuthor = catchAsync(async (req: Request, res: Response) => {
   const clientIp = (ip || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '') as string;
 
   const result = await PublishService.updatePageByAuthor(
-    customUrl,
+    customUrl as string,
     authorId,
     { title, content, pinned },
     clientIp
@@ -138,6 +139,40 @@ const updatePageByAuthor = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const verifyPagePassword = catchAsync(async (req: Request, res: Response) => {
+  const { customUrl } = req.params;
+  const { password } = req.body;
+  
+  const clientIp = (req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '') as string;
+  
+  const result = await PublishService.verifyPagePassword(customUrl as string, password, clientIp);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Password verified, page retrieved successfully',
+    data: result,
+  });
+});
+
+const fetchPageByAuthor = catchAsync(async (req: Request, res: Response) => {
+  const { customUrl } = req.params;
+  const { authorId } = req.body;
+  
+  if (!authorId) {
+    throw new ApiError(400, 'Author ID is required');
+  }
+
+  const result = await PublishService.fetchPageByAuthor(customUrl as string, authorId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Page fetched securely by author',
+    data: result,
+  });
+});
+
 export const PublishController = {
   publishPage,
   getPageByUrl,
@@ -146,4 +181,6 @@ export const PublishController = {
   getAllPagesAdmin,
   getPagesByAuthor,
   updatePageByAuthor,
+  verifyPagePassword,
+  fetchPageByAuthor,
 };
