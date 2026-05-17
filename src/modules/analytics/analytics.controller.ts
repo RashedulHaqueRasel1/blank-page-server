@@ -4,14 +4,15 @@ import sendResponse from '../../utils/sendResponse';
 import { AnalyticsService } from './analytics.service';
 
 const trackVisit = catchAsync(async (req: Request, res: Response) => {
-  // Extract client IP robustly, taking reverse proxies into account
+  const { referrer, ip: bodyIp } = req.body;
+
+  // Extract client IP robustly, taking body, proxies, and socket into account
   const forwarded = req.headers['x-forwarded-for'];
-  const ip = typeof forwarded === 'string'
+  const ip = bodyIp || (typeof forwarded === 'string'
     ? forwarded.split(',')[0].trim()
-    : req.socket.remoteAddress || req.ip || '127.0.0.1';
+    : req.socket.remoteAddress || req.ip || '127.0.0.1');
 
   const userAgent = req.headers['user-agent'] || 'Unknown';
-  const { referrer } = req.body;
 
   const result = await AnalyticsService.trackVisit(ip, userAgent, referrer);
 
