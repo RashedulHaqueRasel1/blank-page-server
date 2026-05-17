@@ -25,6 +25,8 @@ const auth = (...requiredRoles) => (req, res, next) => __awaiter(void 0, void 0,
         if (token.startsWith('Bearer ') || token.startsWith('bearer ')) {
             token = token.slice(7);
         }
+        console.log('DEBUG: JWT_SECRET in auth:', config_1.default.jwt_secret);
+        console.log('DEBUG: Token in auth:', token);
         const verifiedUser = jsonwebtoken_1.default.verify(token, config_1.default.jwt_secret);
         if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
             throw new ApiError_1.default(403, 'Forbidden');

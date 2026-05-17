@@ -1,6 +1,7 @@
 import express from 'express';
 import { AuthRoutes } from '../modules/auth/auth.routes';
 import { UserRoutes } from '../modules/user/user.routes';
+import { AnalyticsRoutes } from '../modules/analytics/analytics.routes';
 
 const router = express.Router();
 
@@ -17,6 +18,10 @@ const moduleRoutes: IRoute[] = [
   {
     path: '/users',
     route: UserRoutes,
+  },
+  {
+    path: '/analytics',
+    route: AnalyticsRoutes,
   },
 ];
 

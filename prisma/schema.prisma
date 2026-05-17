@@ -19,4 +19,23 @@ model User {
   updatedAt  DateTime  @updatedAt
 }
 
+model Visitor {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  ip          String
+  userAgent   String
+  deviceType  String   // Mobile, Tablet, Desktop
+  browser     String
+  os          String
+  referrer    String?
+  country     String?
+  city        String?
+  visitCount  Int      @default(1)
+  firstVisit  DateTime @default(now())
+  lastVisit   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([ip, userAgent])
+}
+
 
