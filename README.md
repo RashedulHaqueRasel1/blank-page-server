@@ -1,6 +1,6 @@
 # Blank Page — Backend Server
 
-This is the **Express.js + Prisma + MongoDB** backend for the **Blank Page** minimalist writing and publishing platform. It handles all publishing logic, author authentication, real-time collaboration, and password-protected page verification.
+This is the **Express.js + Prisma + MongoDB** backend for the **Blank Page** minimalist writing and publishing platform. It handles all publishing logic, author authentication, real-time collaboration, password-protected page verification, and self-destructing one-time view pages.
 
 ---
 
@@ -21,7 +21,7 @@ This is the **Express.js + Prisma + MongoDB** backend for the **Blank Page** min
 
 ### 1. Publishing Engine (`publish.service.ts`)
 - Dynamically generates unique, human-friendly page slugs using `nanoid`.
-- Stores page `content`, `title`, `isEditable`, `expiresAt`, `authorId`, and optional `password` to MongoDB.
+- Stores page `content`, `title`, `isEditable`, `expiresAt`, `authorId`, optional `password`, and `oneTimeView` to MongoDB.
 - Authors are identified by a persistent `writer-id` generated client-side (no login required).
 - Supports configurable auto-expiration (1h → 30 days → never).
 
@@ -31,19 +31,24 @@ This is the **Express.js + Prisma + MongoDB** backend for the **Blank Page** min
 - `verifyPagePassword` — Accepts a visitor's password, validates it against the stored value, and if correct, returns the full page content.
 - `fetchPageByAuthor` — Authors can fetch their own protected pages by providing their `authorId`, bypassing the password check entirely.
 
-### 3. Author Sync & Live Update
+### 3. One-Time View (Self-Destructing Pages)
+- Pages published with `oneTimeView: true` are **permanently soft-deleted** (`isDeleted: true`) from the database immediately after the first successful `getPageByUrl` call.
+- The content is returned to the visitor first, then the deletion is applied in the same request lifecycle.
+- **Author bypass:** If the request comes through `fetchPageByAuthor`, the one-time deletion is skipped, allowing authors to always access their own content.
+- Once deleted, any subsequent visitor receives a 404 response.
+
+### 4. Author Sync & Live Update
 - `updatePageByAuthor` — Validates that the requester is the original author before allowing any content update.
 - **Word-Level Diffing** — On every update, the server strips HTML tags and computes the exact `added` and `removed` words between the old and new content. This diff is appended to an immutable `authorEditsLog` array in MongoDB.
 - **Real-Time Broadcast** — After a successful update, the new content is broadcast to all connected Socket.IO clients viewing that page.
 
-### 4. Real-Time Collaboration (Socket.IO)
+### 5. Real-Time Collaboration (Socket.IO)
 - Clients join a "room" identified by the page's `customUrl`.
 - `edit-page` events are emitted by editing clients and broadcast to all other viewers in the same room.
-- Gracefully skips Socket.IO connection when the server URL is a local address but the client is on a public domain (production safety).
 
-### 5. Strict Security & Data Masking
+### 6. Strict Security & Data Masking
 - All Prisma queries use strict `select` projections — internal MongoDB `_id`s, raw `authorEditsLog`, and `viewerLog` arrays are never exposed in public responses.
-- API routes are protected by `CORS` configuration and an internal `INTERNAL_API_SECRET` for sensitive admin operations.
+- API routes are protected by `CORS` configuration and an `INTERNAL_API_SECRET` for sensitive admin operations.
 - No localhost fallback logic. All configuration is strictly pulled from `.env`.
 
 ---
@@ -54,13 +59,13 @@ This is the **Express.js + Prisma + MongoDB** backend for the **Blank Page** min
 
 | Method | Route | Description |
 |---|---|---|
-| `POST` | `/` | Publish a new page (optional password) |
-| `GET` | `/:customUrl` | Fetch a page (content hidden if protected) |
+| `POST` | `/` | Publish a new page (optional password, one-time view) |
+| `GET` | `/:customUrl` | Fetch a page (content hidden if protected, self-destructs if one-time) |
 | `PATCH` | `/:customUrl` | Collaborative content update |
 | `PUT` | `/author/update/:customUrl` | Author-authenticated full update |
-| `POST` | `/author/fetch/:customUrl` | Author-authenticated fetch (bypasses password) |
+| `POST` | `/author/fetch/:customUrl` | Author-authenticated fetch (bypasses password & one-time deletion) |
 | `POST` | `/verify/:customUrl` | Verify password and retrieve protected page content |
-| `GET` | `/author/:authorId` | Get all pages by an author |
+| `GET` | `/author/:authorId` | Get all pages by an author (includes `oneTimeView` field) |
 | `DELETE` | `/:customUrl` | Soft-delete a published page |
 | `GET` | `/admin/all` | Admin — get all pages |
 
@@ -71,17 +76,17 @@ This is the **Express.js + Prisma + MongoDB** backend for the **Blank Page** min
 ```
 blank-page-server/
 ├── prisma/
-│   └── schema.prisma          # PublishedPage model with password field
+│   └── schema.prisma              # PublishedPage model (password, oneTimeView fields)
 ├── src/
-│   ├── app.ts                 # Express app + Socket.IO setup
-│   ├── server.ts              # HTTP server entry point
+│   ├── app.ts                     # Express app + Socket.IO setup
+│   ├── server.ts                  # HTTP server entry point
 │   ├── lib/
-│   │   └── prisma.ts          # Prisma client singleton
+│   │   └── prisma.ts              # Prisma client singleton
 │   ├── errors/
-│   │   └── ApiError.ts        # Custom error class
+│   │   └── ApiError.ts            # Custom error class
 │   ├── utils/
-│   │   ├── catchAsync.ts      # Async error wrapper
-│   │   └── sendResponse.ts    # Unified response helper
+│   │   ├── catchAsync.ts          # Async error wrapper
+│   │   └── sendResponse.ts        # Unified response helper
 │   └── modules/
 │       └── publish/
 │           ├── publish.routes.ts      # Route definitions
@@ -100,14 +105,18 @@ model PublishedPage {
   content        String
   title          String?
   isEditable     Boolean   @default(false)
-  password       String?   // Optional secret key for page protection
+  password       String?             // Optional secret key for page protection
+  oneTimeView    Boolean   @default(false)  // Self-destructs after first view
+  expiresAt      DateTime?
+  isDeleted      Boolean   @default(false)
+  pinned         Boolean   @default(false)
   authorId       String?
   authorIp       String?
   userId         String?
-  pinned         Boolean   @default(false)
-  isDeleted      Boolean   @default(false)
-  expiresAt      DateTime?
-  authorEditsLog Json[]
+  authorVisits   Int       @default(0)
+  viewerLog      Json      @default("[]")
+  editorLog      Json      @default("[]")
+  authorEditsLog Json      @default("[]")
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 }
@@ -144,12 +153,32 @@ Server starts at **http://localhost:5000**
 
 ---
 
+## 🔥 One-Time View Flow
+
+```
+POST /api/v1/pages  { ..., oneTimeView: true }
+         ↓
+Stored in MongoDB: oneTimeView = true
+         ↓
+GET /api/v1/pages/:url  (first visitor)
+         ↓
+Content returned → isDeleted set to true in same request
+         ↓
+Any future GET → 404 Page Not Found
+         ↓
+POST /api/v1/pages/author/fetch/:url  { authorId }
+         ↓
+Author confirmed → content returned WITHOUT triggering deletion
+```
+
+---
+
 ## 🔐 Password Protection Flow
 
 ```
 POST /api/v1/pages  { ..., password: "mykey" }
          ↓
-Stored in MongoDB as plaintext secret key
+Stored in MongoDB
          ↓
 GET /api/v1/pages/:url  → content stripped → { isProtected: true }
          ↓
@@ -159,7 +188,7 @@ Match found → returns full page content
          ↓
 POST /api/v1/pages/author/fetch/:url  { authorId: "user-xyz" }
          ↓
-Author confirmed → returns full page content (no password needed)
+Author confirmed → returns full content (no password needed)
 ```
 
 ---

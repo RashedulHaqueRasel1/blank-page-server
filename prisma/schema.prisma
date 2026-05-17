@@ -46,6 +46,7 @@ model PublishedPage {
   isEditable    Boolean   @default(false)
   pinned        Boolean   @default(false)
   password      String?
+  oneTimeView   Boolean   @default(false)
   expiresAt     DateTime?
   isDeleted     Boolean   @default(false)
   authorId      String?

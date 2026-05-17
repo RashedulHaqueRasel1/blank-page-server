@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import ApiError from '../../errors/ApiError';
 
 const publishPage = catchAsync(async (req: Request, res: Response) => {
-  const { customUrl, content, isEditable, expiresHours, authorId, ip, title, password } = req.body;
+  const { customUrl, content, isEditable, expiresHours, authorId, ip, title, password, oneTimeView } = req.body;
 
   // Extract user ID from token if logged in (optional guest support)
   let userId: string | undefined = undefined;
@@ -37,6 +37,7 @@ const publishPage = catchAsync(async (req: Request, res: Response) => {
     authorIp: clientIp,
     title,
     password,
+    oneTimeView: oneTimeView === true || oneTimeView === 'true',
   });
 
   sendResponse(res, {

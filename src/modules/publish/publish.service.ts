@@ -12,6 +12,7 @@ type PublishPageData = {
   authorIp?: string;
   title?: string;
   password?: string;
+  oneTimeView?: boolean;
 };
 
 // Viewer log entry shape: { ip, visitCount, lastVisit }
@@ -65,6 +66,7 @@ const publishPage = async (data: PublishPageData): Promise<PublishedPage> => {
       isEditable: data.isEditable,
       expiresAt,
       password: data.password || null,
+      oneTimeView: data.oneTimeView || false,
       authorId: data.authorId || null,
       authorIp: data.authorIp || null,
       authorVisits: 0,
@@ -136,6 +138,14 @@ const getPageByUrl = async (customUrl: string, viewerIp?: string, bypassPassword
         viewerLog: updatedViewerLog as any,
         ...(isAuthor ? { authorVisits: { increment: 1 } } : {}),
       },
+    });
+  }
+
+  // One-Time View: soft-delete after first successful view (author bypasses this)
+  if (page.oneTimeView && !bypassPasswordProtection) {
+    await prisma.publishedPage.update({
+      where: { id: page.id },
+      data: { isDeleted: true },
     });
   }
 
@@ -212,7 +222,7 @@ const getAllPagesAdmin = async (): Promise<PublishedPage[]> => {
   });
 };
 
-const getPagesByAuthor = async (authorId: string): Promise<Pick<PublishedPage, 'customUrl' | 'isEditable' | 'expiresAt' | 'title' | 'pinned'>[]> => {
+const getPagesByAuthor = async (authorId: string): Promise<Pick<PublishedPage, 'customUrl' | 'isEditable' | 'expiresAt' | 'title' | 'pinned' | 'oneTimeView'>[]> => {
   return prisma.publishedPage.findMany({
     where: {
       authorId,
@@ -228,6 +238,7 @@ const getPagesByAuthor = async (authorId: string): Promise<Pick<PublishedPage, '
       expiresAt: true,
       title: true,
       pinned: true,
+      oneTimeView: true,
     },
     orderBy: [
       { pinned: 'desc' },
