@@ -10,6 +10,7 @@ type PublishPageData = {
   userId?: string;
   authorId?: string;
   authorIp?: string;
+  title?: string;
 };
 
 // Viewer log entry shape: { ip, visitCount, lastVisit }
@@ -58,6 +59,7 @@ const publishPage = async (data: PublishPageData): Promise<PublishedPage> => {
   const newPage = await prisma.publishedPage.create({
     data: {
       customUrl: normalizedUrl,
+      title: data.title || 'Untitled',
       content: data.content,
       isEditable: data.isEditable,
       expiresAt,
@@ -66,6 +68,7 @@ const publishPage = async (data: PublishPageData): Promise<PublishedPage> => {
       authorVisits: 0,
       viewerLog: [],
       editorLog: [],
+      authorEditsLog: [],
       userId: data.userId || null,
       isDeleted: false,
     },
@@ -195,10 +198,89 @@ const getAllPagesAdmin = async (): Promise<PublishedPage[]> => {
   });
 };
 
+const getPagesByAuthor = async (authorId: string): Promise<Pick<PublishedPage, 'customUrl' | 'isEditable' | 'expiresAt' | 'title' | 'pinned'>[]> => {
+  return prisma.publishedPage.findMany({
+    where: {
+      authorId,
+      isDeleted: false,
+      OR: [
+        { expiresAt: null },
+        { expiresAt: { gt: new Date() } }
+      ]
+    },
+    select: {
+      customUrl: true,
+      isEditable: true,
+      expiresAt: true,
+      title: true,
+      pinned: true,
+    },
+    orderBy: [
+      { pinned: 'desc' },
+      { createdAt: 'desc' }
+    ],
+  });
+};
+
+const updatePageByAuthor = async (
+  customUrl: string,
+  authorId: string,
+  updates: { title?: string; content?: string; pinned?: boolean },
+  editorIp?: string
+): Promise<PublishedPage> => {
+  const normalizedUrl = customUrl.trim().toLowerCase();
+  const page = await prisma.publishedPage.findUnique({
+    where: { customUrl: normalizedUrl },
+  });
+
+  if (!page) {
+    throw new ApiError(404, 'Published page not found');
+  }
+
+  // Security verification
+  if (page.authorId !== authorId) {
+    throw new ApiError(403, 'You do not have permission to update this page');
+  }
+
+  const now = new Date().toISOString();
+  const currentAuthorEditsLog = (page.authorEditsLog as any[]) || [];
+
+  const stateChange: any = { editedAt: now, ip: editorIp || 'unknown' };
+
+  if (updates.title !== undefined && updates.title !== page.title) {
+    stateChange.oldTitle = page.title;
+    stateChange.newTitle = updates.title;
+  }
+
+  if (updates.content !== undefined && updates.content !== page.content) {
+    const diff = computeDiff(page.content, updates.content);
+    stateChange.diff = { added: diff.added, removed: diff.removed };
+    stateChange.contentLength = updates.content.length;
+  }
+
+  if (updates.pinned !== undefined && updates.pinned !== page.pinned) {
+    stateChange.pinnedState = updates.pinned;
+  }
+
+  const updatedPage = await prisma.publishedPage.update({
+    where: { id: page.id },
+    data: {
+      title: updates.title !== undefined ? updates.title : page.title,
+      content: updates.content !== undefined ? updates.content : page.content,
+      pinned: updates.pinned !== undefined ? updates.pinned : page.pinned,
+      authorEditsLog: [...currentAuthorEditsLog, stateChange],
+    },
+  });
+
+  return updatedPage;
+};
+
 export const PublishService = {
   publishPage,
   getPageByUrl,
   updatePageContent,
   softDeletePage,
   getAllPagesAdmin,
+  getPagesByAuthor,
+  updatePageByAuthor,
 };

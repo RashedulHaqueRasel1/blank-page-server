@@ -1,6 +1,7 @@
 import prisma from '../../lib/prisma';
 import { parseUA } from '../../utils/uaParser';
 import { Visitor } from '@prisma/client';
+import config from '../../config';
 
 const fetchGeoLocation = async (ip: string, visitorId: string) => {
   try {
@@ -22,7 +23,7 @@ const fetchGeoLocation = async (ip: string, visitorId: string) => {
       return;
     }
 
-    const response = await fetch(`http://ip-api.com/json/${ip}`);
+    const response = await fetch(`${config.ip_geolocation_api_url}${ip}`);
     const data = await response.json();
 
     if (data && data.status === 'success') {

@@ -10,6 +10,12 @@ router.post('/', PublishController.publishPage);
 // Admin-only route to list all published pages
 router.get('/admin', auth('ADMIN'), PublishController.getAllPagesAdmin);
 
+// Route to get published pages by author ID
+router.get('/author/:authorId', PublishController.getPagesByAuthor);
+
+// Route for author to securely update page title, pin status, or content
+router.put('/author/update/:customUrl', PublishController.updatePageByAuthor);
+
 // Public route to retrieve a page by its custom URL
 router.get('/:customUrl', PublishController.getPageByUrl);
 

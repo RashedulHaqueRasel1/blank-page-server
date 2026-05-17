@@ -41,8 +41,10 @@ model Visitor {
 model PublishedPage {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   customUrl     String    @unique
+  title         String    @default("Untitled")
   content       String
   isEditable    Boolean   @default(false)
+  pinned        Boolean   @default(false)
   expiresAt     DateTime?
   isDeleted     Boolean   @default(false)
   authorId      String?
@@ -52,6 +54,7 @@ model PublishedPage {
   viewerLog     Json      @default("[]")
   // editorLog: [{ip, visitCount, edits: [{content, editedAt}]}]
   editorLog     Json      @default("[]")
+  authorEditsLog Json     @default("[]")
   userId        String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

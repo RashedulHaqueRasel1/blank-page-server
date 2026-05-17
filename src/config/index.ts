@@ -8,4 +8,5 @@ export default {
   port: process.env.PORT,
   database_url: process.env.DATABASE_URL,
   jwt_secret: process.env.JWT_SECRET,
+  ip_geolocation_api_url: process.env.IP_GEOLOCATION_API_URL,
 };

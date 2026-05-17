@@ -3,9 +3,10 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { PublishService } from './publish.service';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import ApiError from '../../errors/ApiError';
 
 const publishPage = catchAsync(async (req: Request, res: Response) => {
-  const { customUrl, content, isEditable, expiresHours, authorId, ip } = req.body;
+  const { customUrl, content, isEditable, expiresHours, authorId, ip, title } = req.body;
 
   // Extract user ID from token if logged in (optional guest support)
   let userId: string | undefined = undefined;
@@ -13,7 +14,7 @@ const publishPage = catchAsync(async (req: Request, res: Response) => {
   if (authHeader && authHeader.startsWith('Bearer ')) {
     try {
       const token = authHeader.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretjwtkey') as JwtPayload;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
       userId = decoded.id;
     } catch (err) {
       // Ignore token verification failure, treat as guest publish
@@ -34,6 +35,7 @@ const publishPage = catchAsync(async (req: Request, res: Response) => {
     userId: finalUserId || undefined,
     authorId,
     authorIp: clientIp,
+    title,
   });
 
   sendResponse(res, {
@@ -99,10 +101,49 @@ const getAllPagesAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getPagesByAuthor = catchAsync(async (req: Request, res: Response) => {
+  const { authorId } = req.params;
+  const result = await PublishService.getPagesByAuthor(authorId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Author published pages retrieved successfully',
+    data: result,
+  });
+});
+
+const updatePageByAuthor = catchAsync(async (req: Request, res: Response) => {
+  const { customUrl } = req.params;
+  const { authorId, title, content, pinned, ip } = req.body;
+
+  if (!authorId) {
+    throw new ApiError(400, 'Author ID is required to perform this update');
+  }
+
+  const clientIp = (ip || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || '') as string;
+
+  const result = await PublishService.updatePageByAuthor(
+    customUrl,
+    authorId,
+    { title, content, pinned },
+    clientIp
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Page updated by author successfully',
+    data: result,
+  });
+});
+
 export const PublishController = {
   publishPage,
   getPageByUrl,
   updatePageContent,
   softDeletePage,
   getAllPagesAdmin,
+  getPagesByAuthor,
+  updatePageByAuthor,
 };
