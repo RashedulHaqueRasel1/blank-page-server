@@ -15,6 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PublishService = void 0;
 const prisma_1 = __importDefault(require("../../lib/prisma"));
 const ApiError_1 = __importDefault(require("../../errors/ApiError"));
+// Strip HTML tags to get plain text
+const stripHtml = (html) => html.replace(/<[^>]*>/g, '').trim();
+// Compute a simple word-level diff between old and new content
+const computeDiff = (oldContent, newContent) => {
+    const oldWords = stripHtml(oldContent).split(/\s+/).filter(Boolean);
+    const newWords = stripHtml(newContent).split(/\s+/).filter(Boolean);
+    const oldSet = new Set(oldWords);
+    const newSet = new Set(newWords);
+    const added = newWords.filter((w) => !oldSet.has(w)).join(' ');
+    const removed = oldWords.filter((w) => !newSet.has(w)).join(' ');
+    return { added, removed };
+};
 const publishPage = (data) => __awaiter(void 0, void 0, void 0, function* () {
     if (!data.customUrl || data.customUrl.trim().length < 4) {
         throw new ApiError_1.default(400, 'Custom URL must be at least 4 characters long');
@@ -33,21 +45,25 @@ const publishPage = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const newPage = yield prisma_1.default.publishedPage.create({
         data: {
             customUrl: normalizedUrl,
+            title: data.title || 'Untitled',
             content: data.content,
             isEditable: data.isEditable,
             expiresAt,
+            password: data.password || null,
+            oneTimeView: data.oneTimeView || false,
             authorId: data.authorId || null,
             authorIp: data.authorIp || null,
             authorVisits: 0,
             viewerLog: [],
             editorLog: [],
+            authorEditsLog: [],
             userId: data.userId || null,
             isDeleted: false,
         },
     });
     return newPage;
 });
-const getPageByUrl = (customUrl, viewerIp) => __awaiter(void 0, void 0, void 0, function* () {
+const getPageByUrl = (customUrl_1, viewerIp_1, ...args_1) => __awaiter(void 0, [customUrl_1, viewerIp_1, ...args_1], void 0, function* (customUrl, viewerIp, bypassPasswordProtection = false) {
     const normalizedUrl = customUrl.trim().toLowerCase();
     const page = yield prisma_1.default.publishedPage.findUnique({
         where: { customUrl: normalizedUrl },
@@ -61,6 +77,17 @@ const getPageByUrl = (customUrl, viewerIp) => __awaiter(void 0, void 0, void 0, 
             data: { isDeleted: true },
         });
         throw new ApiError_1.default(404, 'Page not found');
+    }
+    // Password Protection Logic
+    if (page.password && !bypassPasswordProtection) {
+        return {
+            isProtected: true,
+            title: page.title,
+            customUrl: page.customUrl,
+            isEditable: page.isEditable,
+            expiresAt: page.expiresAt,
+            pinned: page.pinned,
+        };
     }
     // Track viewer IP with visit count
     if (viewerIp) {
@@ -82,6 +109,13 @@ const getPageByUrl = (customUrl, viewerIp) => __awaiter(void 0, void 0, void 0, 
             data: Object.assign({ viewerLog: updatedViewerLog }, (isAuthor ? { authorVisits: { increment: 1 } } : {})),
         });
     }
+    // One-Time View: soft-delete after first successful view (author bypasses this)
+    if (page.oneTimeView && !bypassPasswordProtection) {
+        yield prisma_1.default.publishedPage.update({
+            where: { id: page.id },
+            data: { isDeleted: true },
+        });
+    }
     return page;
 });
 const updatePageContent = (customUrl, content, editorIp) => __awaiter(void 0, void 0, void 0, function* () {
@@ -91,7 +125,9 @@ const updatePageContent = (customUrl, content, editorIp) => __awaiter(void 0, vo
     }
     const now = new Date().toISOString();
     const editorLog = page.editorLog || [];
-    const newEdit = { content, editedAt: now };
+    // Compute diff: only store what changed, not the full content
+    const diff = computeDiff(page.content, content);
+    const newEdit = { added: diff.added, removed: diff.removed, editedAt: now };
     let updatedEditorLog;
     if (editorIp) {
         const existingEntry = editorLog.find((e) => e.ip === editorIp);
@@ -134,10 +170,106 @@ const getAllPagesAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
         orderBy: { createdAt: 'desc' },
     });
 });
+const getPagesByAuthor = (authorId) => __awaiter(void 0, void 0, void 0, function* () {
+    return prisma_1.default.publishedPage.findMany({
+        where: {
+            authorId,
+            isDeleted: false,
+            OR: [
+                { expiresAt: null },
+                { expiresAt: { gt: new Date() } }
+            ]
+        },
+        select: {
+            customUrl: true,
+            isEditable: true,
+            expiresAt: true,
+            title: true,
+            pinned: true,
+            oneTimeView: true,
+        },
+        orderBy: [
+            { pinned: 'desc' },
+            { createdAt: 'desc' }
+        ],
+    });
+});
+const updatePageByAuthor = (customUrl, authorId, updates, editorIp) => __awaiter(void 0, void 0, void 0, function* () {
+    const normalizedUrl = customUrl.trim().toLowerCase();
+    const page = yield prisma_1.default.publishedPage.findUnique({
+        where: { customUrl: normalizedUrl },
+    });
+    if (!page) {
+        throw new ApiError_1.default(404, 'Published page not found');
+    }
+    // Security verification
+    if (page.authorId !== authorId) {
+        throw new ApiError_1.default(403, 'You do not have permission to update this page');
+    }
+    const now = new Date().toISOString();
+    const currentAuthorEditsLog = page.authorEditsLog || [];
+    const stateChange = { editedAt: now, ip: editorIp || 'unknown' };
+    if (updates.title !== undefined && updates.title !== page.title) {
+        stateChange.oldTitle = page.title;
+        stateChange.newTitle = updates.title;
+    }
+    if (updates.content !== undefined && updates.content !== page.content) {
+        const diff = computeDiff(page.content, updates.content);
+        stateChange.diff = { added: diff.added, removed: diff.removed };
+        stateChange.contentLength = updates.content.length;
+    }
+    if (updates.pinned !== undefined && updates.pinned !== page.pinned) {
+        stateChange.pinnedState = updates.pinned;
+    }
+    const updatedPage = yield prisma_1.default.publishedPage.update({
+        where: { id: page.id },
+        data: {
+            title: updates.title !== undefined ? updates.title : page.title,
+            content: updates.content !== undefined ? updates.content : page.content,
+            pinned: updates.pinned !== undefined ? updates.pinned : page.pinned,
+            authorEditsLog: [...currentAuthorEditsLog, stateChange],
+        },
+    });
+    return updatedPage;
+});
+const verifyPagePassword = (customUrl, passwordAttempt, viewerIp) => __awaiter(void 0, void 0, void 0, function* () {
+    const normalizedUrl = customUrl.trim().toLowerCase();
+    const page = yield prisma_1.default.publishedPage.findUnique({
+        where: { customUrl: normalizedUrl },
+    });
+    if (!page || page.isDeleted) {
+        throw new ApiError_1.default(404, 'Page not found');
+    }
+    if (!page.password) {
+        return yield getPageByUrl(customUrl, viewerIp, true);
+    }
+    if (page.password !== passwordAttempt) {
+        throw new ApiError_1.default(401, 'Incorrect password');
+    }
+    return yield getPageByUrl(customUrl, viewerIp, true);
+});
+const fetchPageByAuthor = (customUrl, authorId) => __awaiter(void 0, void 0, void 0, function* () {
+    const normalizedUrl = customUrl.trim().toLowerCase();
+    const page = yield prisma_1.default.publishedPage.findUnique({
+        where: { customUrl: normalizedUrl },
+    });
+    if (!page || page.isDeleted) {
+        throw new ApiError_1.default(404, 'Page not found');
+    }
+    if (page.authorId !== authorId) {
+        throw new ApiError_1.default(403, 'You do not have permission to fetch this page');
+    }
+    // Bypass password protection for the original author
+    return yield getPageByUrl(customUrl, undefined, true);
+});
 exports.PublishService = {
     publishPage,
     getPageByUrl,
     updatePageContent,
     softDeletePage,
     getAllPagesAdmin,
+    getPagesByAuthor,
+    updatePageByAuthor,
+    verifyPagePassword,
+    fetchPageByAuthor,
 };

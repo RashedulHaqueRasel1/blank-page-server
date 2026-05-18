@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsService = void 0;
 const prisma_1 = __importDefault(require("../../lib/prisma"));
 const uaParser_1 = require("../../utils/uaParser");
+const config_1 = __importDefault(require("../../config"));
 const fetchGeoLocation = (ip, visitorId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Check if local IP
@@ -32,7 +33,7 @@ const fetchGeoLocation = (ip, visitorId) => __awaiter(void 0, void 0, void 0, fu
             });
             return;
         }
-        const response = yield fetch(`http://ip-api.com/json/${ip}`);
+        const response = yield fetch(`${config_1.default.ip_geolocation_api_url}${ip}`);
         const data = yield response.json();
         if (data && data.status === 'success') {
             yield prisma_1.default.visitor.update({

@@ -11,7 +11,12 @@ const app = (0, express_1.default)();
 // Parsers
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
+app.use((req, _res, next) => {
+    req.url = req.url.replace(/^\/{2,}/, '/');
+    next();
+});
 // Application routes
+app.use('/api', routes_1.default);
 app.use('/api/v1', routes_1.default);
 // Testing route (as requested by user)
 app.get('/', (req, res) => {

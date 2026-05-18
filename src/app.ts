@@ -9,7 +9,13 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
+app.use((req, _res, next) => {
+  req.url = req.url.replace(/^\/{2,}/, '/');
+  next();
+});
+
 // Application routes
+app.use('/api', router);
 app.use('/api/v1', router);
 
 // Testing route (as requested by user)

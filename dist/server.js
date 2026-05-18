@@ -15,12 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 const config_1 = __importDefault(require("./config"));
 const prisma_1 = __importDefault(require("./lib/prisma"));
+const http_1 = __importDefault(require("http"));
+const socket_1 = require("./socket");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield prisma_1.default.$connect();
             console.log('🗄️  Database connected successfully');
-            app_1.default.listen(config_1.default.port, () => {
+            const server = http_1.default.createServer(app_1.default);
+            (0, socket_1.initSocket)(server);
+            server.listen(config_1.default.port, () => {
                 console.log(`🚀 Server is running on port ${config_1.default.port}`);
             });
         }
