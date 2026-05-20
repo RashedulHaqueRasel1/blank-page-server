@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 import ApiError from '../errors/ApiError';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../generated/client';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let statusCode = 500;

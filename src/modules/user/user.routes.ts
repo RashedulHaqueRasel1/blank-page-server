@@ -4,6 +4,6 @@ import { UserController } from './user.controller';
 
 const router = express.Router();
 
-router.get('/', auth('ADMIN'), UserController.getAllUsers);
+router.get('/admin/all-users', auth('ADMIN'), UserController.getAllUsers);
 
-export const UserRoutes = router;
+export default router;

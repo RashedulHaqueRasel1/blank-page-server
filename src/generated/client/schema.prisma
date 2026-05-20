@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  email      String    @unique
+  password   String
+  role       String    @default("USER")
+  firstLogin DateTime?
+  lastLogin  DateTime?
+  loginCount Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Visitor {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  ip         String
+  userAgent  String
+  deviceType String // Mobile, Tablet, Desktop
+  browser    String
+  os         String
+  referrer   String?
+  country    String?
+  city       String?
+  visitCount Int      @default(1)
+  firstVisit DateTime @default(now())
+  lastVisit  DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([ip, userAgent])
+}
+
+model PublishedPage {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  customUrl      String    @unique
+  title          String    @default("Untitled")
+  content        String
+  isEditable     Boolean   @default(false)
+  pinned         Boolean   @default(false)
+  password       String?
+  oneTimeView    Boolean   @default(false)
+  expiresAt      DateTime?
+  isDeleted      Boolean   @default(false)
+  authorId       String?
+  authorIp       String?
+  authorVisits   Int       @default(0)
+  // viewerLog: [{ip, visitCount, lastVisit}]
+  viewerLog      Json      @default("[]")
+  // editorLog: [{ip, visitCount, edits: [{content, editedAt}]}]
+  editorLog      Json      @default("[]")
+  authorEditsLog Json      @default("[]")
+  userId         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Subscriber {
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  email                 String    @unique
+  isSubscribed          Boolean   @default(true)
+  isVerified            Boolean   @default(false)
+  isRegisteredUser      Boolean   @default(false)
+  ip                    String
+  userAgent             String
+  country               String?
+  city                  String?
+  subscriptionStartDate DateTime? @default(now())
+  subscriptionEndDate   DateTime?
+  unsubscribedAt        DateTime?
+  createdAt             DateTime? @default(now())
+}

@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/client"
 }
 
 datasource db {
@@ -62,4 +63,19 @@ model PublishedPage {
   updatedAt     DateTime  @updatedAt
 }
 
+model Subscriber {
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  email                 String    @unique
+  isSubscribed          Boolean   @default(true)
+  isVerified            Boolean   @default(false)
+  isRegisteredUser      Boolean   @default(false)
+  ip                    String
+  userAgent             String
+  country               String?
+  city                  String?
+  subscriptionStartDate DateTime?  @default(now())
+  subscriptionEndDate   DateTime?
+  unsubscribedAt        DateTime?
+  createdAt             DateTime?  @default(now())
+}
 

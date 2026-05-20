@@ -1,5 +1,5 @@
 import prisma from '../../lib/prisma';
-import { User } from '@prisma/client';
+import { User } from '../../generated/client';
 
 const getAllUsers = async (): Promise<Omit<User, 'password'>[]> => {
   const users = await prisma.user.findMany({

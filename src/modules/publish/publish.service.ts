@@ -1,6 +1,6 @@
 import prisma from '../../lib/prisma';
 import ApiError from '../../errors/ApiError';
-import { PublishedPage } from '@prisma/client';
+import { PublishedPage } from '../../generated/client';
 
 type PublishPageData = {
   customUrl: string;

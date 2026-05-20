@@ -3,7 +3,7 @@ import { hashHelper } from '../../utils/hashHelper';
 import { jwtHelper } from '../../utils/jwtHelper';
 import config from '../../config';
 import ApiError from '../../errors/ApiError';
-import { User } from '@prisma/client';
+import { User } from '../../generated/client';
 
 const registerUser = async (payload: User): Promise<Omit<User, 'password'>> => {
   const isExist = await prisma.user.findUnique({

@@ -1,0 +1,771 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Blank Page API",
+    "description": "API documentation for Blank Page Server",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Development Server"
+    },
+    {
+      "url": "https://blank-page-server.onrender.com",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "strongpassword123"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "AUTHOR"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Auth"
+        ],
+        "summary": "/api/v1/auth/register",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "strongpassword123"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Auth"
+        ],
+        "summary": "/api/v1/auth/login",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/profile": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "User API - Auth"
+        ],
+        "summary": "/api/v1/auth/profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/admin/all-users": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin API - Users"
+        ],
+        "summary": "/api/v1/users/admin/all-users",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/analytics/track-visit": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "d": {
+                    "type": "string",
+                    "description": "Base64 encoded payload",
+                    "example": "eyJpcCI6IjEyNy4wLjAuMSIsInJlZmVycmVyIjoiaHR0cHM6Ly9leGFtcGxlLmNvbSJ9"
+                  }
+                },
+                "required": [
+                  "d"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Analytics"
+        ],
+        "summary": "/api/v1/analytics/track-visit",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/analytics/admin/overview": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin API - Analytics"
+        ],
+        "summary": "/api/v1/analytics/admin/overview",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/create": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customUrl": {
+                    "type": "string",
+                    "example": "my-secret-page"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Secret Notes"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "Hello world!"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "optional123"
+                  },
+                  "authorId": {
+                    "type": "string",
+                    "example": "user-123"
+                  },
+                  "isEditable": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "oneTimeView": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "expiresHours": {
+                    "type": "number",
+                    "example": 24
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Pages"
+        ],
+        "summary": "/api/v1/pages/create",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/admin/all-pages": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin API - Pages"
+        ],
+        "summary": "/api/v1/pages/admin/all-pages",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/author/{authorId}/list": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "User API - Pages"
+        ],
+        "summary": "/api/v1/pages/author/{authorId}/list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/{customUrl}/secure-update": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "customUrl",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "authorId": {
+                    "type": "string",
+                    "example": "user-123"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Updated Title"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "Updated content"
+                  },
+                  "pinned": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "authorId"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Pages"
+        ],
+        "summary": "/api/v1/pages/{customUrl}/secure-update",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/{customUrl}/secure-fetch": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "customUrl",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "authorId": {
+                    "type": "string",
+                    "example": "user-123"
+                  }
+                },
+                "required": [
+                  "authorId"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Pages"
+        ],
+        "summary": "/api/v1/pages/{customUrl}/secure-fetch",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/{customUrl}/view": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "User API - Pages"
+        ],
+        "summary": "/api/v1/pages/{customUrl}/view",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/{customUrl}/public-edit": {
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "customUrl",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "example": "New content addition"
+                  }
+                },
+                "required": [
+                  "content"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Pages"
+        ],
+        "summary": "/api/v1/pages/{customUrl}/public-edit",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/{customUrl}/delete": {
+      "delete": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "User API - Pages"
+        ],
+        "summary": "/api/v1/pages/{customUrl}/delete",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/pages/{customUrl}/verify-password": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "customUrl",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "example": "secret123"
+                  }
+                },
+                "required": [
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Pages"
+        ],
+        "summary": "/api/v1/pages/{customUrl}/verify-password",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/subscribers/subscribe": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  }
+                },
+                "required": [
+                  "email"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "User API - Subscribers"
+        ],
+        "summary": "/api/v1/subscribers/subscribe",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/subscribers/unsubscribe": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "User API - Subscribers"
+        ],
+        "summary": "/api/v1/subscribers/unsubscribe",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/subscribers/admin/list": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin API - Subscribers"
+        ],
+        "summary": "/api/v1/subscribers/admin/list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/subscribers/admin/{id}": {
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "isSubscribed": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "isVerified": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "subscriptionEndDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2030-12-31T23:59:59.000Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Admin API - Subscribers"
+        ],
+        "summary": "/api/v1/subscribers/admin/{id}",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin API - Subscribers"
+        ],
+        "summary": "/api/v1/subscribers/admin/{id}",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/visitors/admin/list": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin API - Visitors"
+        ],
+        "summary": "/api/v1/visitors/admin/list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/visitors/admin/{id}": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin API - Visitors"
+        ],
+        "summary": "/api/v1/visitors/admin/{id}",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin API - Visitors"
+        ],
+        "summary": "/api/v1/visitors/admin/{id}",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter your JWT token here to authenticate your requests."
+      }
+    }
+  }
+}

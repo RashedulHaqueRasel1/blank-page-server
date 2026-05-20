@@ -1,6 +1,6 @@
 import prisma from '../../lib/prisma';
 import { parseUA } from '../../utils/uaParser';
-import { Visitor } from '@prisma/client';
+import { Visitor } from '../../generated/client';
 import config from '../../config';
 
 const fetchGeoLocation = async (ip: string, visitorId: string) => {
@@ -121,14 +121,6 @@ const getStats = async () => {
     operatingSystems[v.os] = (operatingSystems[v.os] || 0) + 1;
   });
 
-  // Get recent 20 visitor logs
-  const recentVisitors = await prisma.visitor.findMany({
-    orderBy: {
-      lastVisit: 'desc',
-    },
-    take: 20,
-  });
-
   return {
     totalVisitors,
     totalVisits,
@@ -136,7 +128,6 @@ const getStats = async () => {
     browserDistribution: browsers,
     countryDistribution: countries,
     osDistribution: operatingSystems,
-    recentVisitors,
   };
 };
 
