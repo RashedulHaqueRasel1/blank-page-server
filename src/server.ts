@@ -18,7 +18,7 @@ async function main() {
 
     server.listen(config.port, () => {
       console.log(`🚀 Server is running on port ${config.port}`);
-      console.log(`📄 API Reference docs available at /api-docs`);
+      console.log(`📄 API Reference docs available at /docs`);
     });
   } catch (error) {
     console.error('Failed to connect to database or start server', error);
