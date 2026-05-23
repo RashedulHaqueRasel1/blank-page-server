@@ -10,11 +10,11 @@ export const initSocket = (server: HttpServer) => {
   });
 
   io.on('connection', (socket) => {
-    // console.log('New client connected:', socket.id);
+    console.log('🔌 New client connected:', socket.id);
 
     socket.on('join-page', (customUrl: string) => {
       socket.join(customUrl);
-      // console.log(`Socket ${socket.id} joined page: ${customUrl}`);
+      console.log(`🔌 Socket ${socket.id} joined page: ${customUrl}`);
     });
 
     socket.on('edit-page', (data: { customUrl: string; content: string }) => {
@@ -23,7 +23,7 @@ export const initSocket = (server: HttpServer) => {
     });
 
     socket.on('disconnect', () => {
-      // console.log('Client disconnected:', socket.id);
+      console.log('🔌 Client disconnected:', socket.id);
     });
   });
 
