@@ -106,7 +106,7 @@ const getStats = async () => {
   ]);
 
   // Aggregate total visits
-  const totalVisits = visitors.reduce((sum, v) => sum + v.visitCount, 0);
+  const totalVisits = visitors.reduce((sum: number, v: { visitCount: number }) => sum + v.visitCount, 0);
 
   // Group metrics
   const devices: Record<string, number> = {};
@@ -114,7 +114,12 @@ const getStats = async () => {
   const countries: Record<string, number> = {};
   const operatingSystems: Record<string, number> = {};
 
-  visitors.forEach((v) => {
+  visitors.forEach((v: {
+    deviceType: string;
+    browser: string;
+    country: string | null;
+    os: string;
+  }) => {
     devices[v.deviceType] = (devices[v.deviceType] || 0) + 1;
     browsers[v.browser] = (browsers[v.browser] || 0) + 1;
     countries[v.country || 'Unknown'] = (countries[v.country || 'Unknown'] || 0) + 1;

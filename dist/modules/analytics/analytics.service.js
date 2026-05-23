@@ -115,13 +115,6 @@ const getStats = () => __awaiter(void 0, void 0, void 0, function* () {
         countries[v.country || 'Unknown'] = (countries[v.country || 'Unknown'] || 0) + 1;
         operatingSystems[v.os] = (operatingSystems[v.os] || 0) + 1;
     });
-    // Get recent 20 visitor logs
-    const recentVisitors = yield prisma_1.default.visitor.findMany({
-        orderBy: {
-            lastVisit: 'desc',
-        },
-        take: 20,
-    });
     return {
         totalVisitors,
         totalVisits,
@@ -129,7 +122,6 @@ const getStats = () => __awaiter(void 0, void 0, void 0, function* () {
         browserDistribution: browsers,
         countryDistribution: countries,
         osDistribution: operatingSystems,
-        recentVisitors,
     };
 });
 exports.AnalyticsService = {

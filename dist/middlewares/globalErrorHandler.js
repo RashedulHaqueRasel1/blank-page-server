@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const zod_1 = require("zod");
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const globalErrorHandler = (err, req, res, next) => {
     var _a;
     let statusCode = 500;

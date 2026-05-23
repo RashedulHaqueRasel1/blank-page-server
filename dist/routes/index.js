@@ -4,28 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const auth_routes_1 = require("../modules/auth/auth.routes");
-const user_routes_1 = require("../modules/user/user.routes");
-const analytics_routes_1 = require("../modules/analytics/analytics.routes");
-const publish_routes_1 = require("../modules/publish/publish.routes");
+const auth_routes_1 = __importDefault(require("../modules/auth/auth.routes"));
+const user_routes_1 = __importDefault(require("../modules/user/user.routes"));
+const analytics_routes_1 = __importDefault(require("../modules/analytics/analytics.routes"));
+const publish_routes_1 = __importDefault(require("../modules/publish/publish.routes"));
+const subscriber_routes_1 = __importDefault(require("../modules/subscriber/subscriber.routes"));
+const recent_visitors_routes_1 = __importDefault(require("../modules/recent-visitors/recent-visitors.routes"));
 const router = express_1.default.Router();
-const moduleRoutes = [
-    {
-        path: '/auth',
-        route: auth_routes_1.AuthRoutes,
-    },
-    {
-        path: '/users',
-        route: user_routes_1.UserRoutes,
-    },
-    {
-        path: '/sys',
-        route: analytics_routes_1.AnalyticsRoutes,
-    },
-    {
-        path: '/pages',
-        route: publish_routes_1.PublishRoutes,
-    },
-];
-moduleRoutes.forEach((route) => router.use(route.path, route.route));
+router.use('/auth', auth_routes_1.default);
+router.use('/users', user_routes_1.default);
+router.use('/analytics', analytics_routes_1.default);
+router.use('/pages', publish_routes_1.default);
+router.use('/subscribers', subscriber_routes_1.default);
+router.use('/visitors', recent_visitors_routes_1.default);
 exports.default = router;
