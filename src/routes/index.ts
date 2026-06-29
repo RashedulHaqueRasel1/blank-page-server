@@ -5,6 +5,7 @@ import AnalyticsRoutes from '../modules/analytics/analytics.routes';
 import PublishRoutes from '../modules/publish/publish.routes';
 import SubscriberRoutes from '../modules/subscriber/subscriber.routes';
 import RecentVisitorsRoutes from '../modules/recent-visitors/recent-visitors.routes';
+import BackupRoutes from '../modules/backup/backup.routes';
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use('/analytics', AnalyticsRoutes);
 router.use('/pages', PublishRoutes);
 router.use('/subscribers', SubscriberRoutes);
 router.use('/visitors', RecentVisitorsRoutes);
+router.use('/backups', BackupRoutes);
 
 export default router;

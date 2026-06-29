@@ -16,6 +16,8 @@ exports.SubscriberService = void 0;
 const prisma_1 = __importDefault(require("../../lib/prisma"));
 const mailer_1 = require("../../utils/mailer");
 const config_1 = __importDefault(require("../../config"));
+const ApiError_1 = __importDefault(require("../../errors/ApiError"));
+const crypto_1 = __importDefault(require("crypto"));
 const fetchGeoLocation = (ip, subscriberId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (ip === '::1' ||
@@ -46,36 +48,101 @@ const fetchGeoLocation = (ip, subscriberId) => __awaiter(void 0, void 0, void 0,
     }
 });
 const subscribe = (email, ip, userAgent) => __awaiter(void 0, void 0, void 0, function* () {
-    // Check if already subscribed
-    const existing = yield prisma_1.default.subscriber.findUnique({ where: { email } });
-    if (existing) {
-        return { alreadySubscribed: true, subscriber: existing };
-    }
+    const normalizedEmail = email.trim().toLowerCase();
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
     // Check if email belongs to a registered user
-    const registeredUser = yield prisma_1.default.user.findUnique({ where: { email } });
+    const registeredUser = yield prisma_1.default.user.findUnique({ where: { email: normalizedEmail } });
     const normalizedIp = ip === '::ffff:127.0.0.1' ? '127.0.0.1' : ip;
     // Subscription end date: 2030-12-31
     const subscriptionEndDate = new Date('2030-12-31T23:59:59.000Z');
-    const subscriber = yield prisma_1.default.subscriber.create({
-        data: {
-            email,
-            isSubscribed: true,
-            isRegisteredUser: !!registeredUser,
-            ip: normalizedIp,
-            userAgent,
-            country: 'Fetching...',
-            city: 'Fetching...',
-            subscriptionStartDate: new Date(),
-            subscriptionEndDate,
-        },
-    });
+    const existing = yield prisma_1.default.subscriber.findUnique({ where: { email: normalizedEmail } });
+    const subscriber = existing
+        ? yield prisma_1.default.subscriber.update({
+            where: { email: normalizedEmail },
+            data: {
+                isSubscribed: true,
+                isRegisteredUser: !!registeredUser,
+                verificationCode,
+                verificationExpiresAt,
+                ip: normalizedIp,
+                userAgent,
+                subscriptionEndDate,
+                unsubscribedAt: null,
+            },
+        })
+        : yield prisma_1.default.subscriber.create({
+            data: {
+                email: normalizedEmail,
+                isSubscribed: true,
+                isRegisteredUser: !!registeredUser,
+                verificationCode,
+                verificationExpiresAt,
+                ip: normalizedIp,
+                userAgent,
+                country: 'Fetching...',
+                city: 'Fetching...',
+                subscriptionStartDate: new Date(),
+                subscriptionEndDate,
+            },
+        });
     // Fetch geo in background
     fetchGeoLocation(normalizedIp, subscriber.id);
-    // Send thank you email in background
-    (0, mailer_1.sendThankYouEmail)(email).catch((err) => {
-        console.error('Failed to send thank you email:', err);
+    const emailResult = yield (0, mailer_1.sendVerificationEmail)(normalizedEmail, verificationCode);
+    return { alreadySubscribed: !!existing, subscriber, devVerificationCode: emailResult.devCode };
+});
+const verifySubscriberEmail = (email, code) => __awaiter(void 0, void 0, void 0, function* () {
+    const normalizedEmail = email.trim().toLowerCase();
+    const subscriber = yield prisma_1.default.subscriber.findUnique({ where: { email: normalizedEmail } });
+    if (!subscriber) {
+        throw new ApiError_1.default(404, 'Subscriber not found');
+    }
+    if (subscriber.isVerified) {
+        if (subscriber.backupToken) {
+            return subscriber;
+        }
+        return prisma_1.default.subscriber.update({
+            where: { email: normalizedEmail },
+            data: { backupToken: crypto_1.default.randomBytes(32).toString('hex') },
+        });
+    }
+    if (!subscriber.verificationCode || !subscriber.verificationExpiresAt) {
+        throw new ApiError_1.default(400, 'No verification code found. Please request a new code.');
+    }
+    if (subscriber.verificationExpiresAt < new Date()) {
+        throw new ApiError_1.default(400, 'Verification code expired. Please request a new code.');
+    }
+    if (subscriber.verificationCode !== code.trim()) {
+        throw new ApiError_1.default(400, 'Invalid verification code');
+    }
+    const verifiedSubscriber = yield prisma_1.default.subscriber.update({
+        where: { email: normalizedEmail },
+        data: {
+            isVerified: true,
+            verifiedAt: new Date(),
+            verificationCode: null,
+            verificationExpiresAt: null,
+            backupToken: crypto_1.default.randomBytes(32).toString('hex'),
+        },
     });
-    return { alreadySubscribed: false, subscriber };
+    return verifiedSubscriber;
+});
+const getOrCreateBackupToken = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const normalizedEmail = email.trim().toLowerCase();
+    const subscriber = yield prisma_1.default.subscriber.findUnique({ where: { email: normalizedEmail } });
+    if (!subscriber) {
+        throw new ApiError_1.default(404, 'Subscriber not found');
+    }
+    if (!subscriber.isVerified) {
+        throw new ApiError_1.default(403, 'Email must be verified before backup can be enabled');
+    }
+    if (subscriber.backupToken) {
+        return subscriber;
+    }
+    return prisma_1.default.subscriber.update({
+        where: { email: normalizedEmail },
+        data: { backupToken: crypto_1.default.randomBytes(32).toString('hex') },
+    });
 });
 const getSubscribers = (...args_1) => __awaiter(void 0, [...args_1], void 0, function* (page = 1, limit = 20) {
     const skip = (page - 1) * limit;
@@ -116,6 +183,8 @@ const unsubscribe = (email) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.SubscriberService = {
     subscribe,
+    verifySubscriberEmail,
+    getOrCreateBackupToken,
     getSubscribers,
     updateSubscriber,
     deleteSubscriber,

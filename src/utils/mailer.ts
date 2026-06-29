@@ -1,17 +1,37 @@
 import nodemailer from 'nodemailer';
 import config from '../config';
+import ApiError from '../errors/ApiError';
 
-const transporter = nodemailer.createTransport({
-  host: config.smtp_host,
-  port: config.smtp_port,
-  secure: config.smtp_port === 465,
-  auth: {
-    user: config.smtp_user,
-    pass: config.smtp_pass,
-  },
-});
+const isSmtpConfigured = Boolean(
+  config.smtp_host &&
+  config.smtp_user &&
+  config.smtp_pass &&
+  config.smtp_from_email
+);
+
+const getTransporter = () => {
+  if (!isSmtpConfigured) {
+    if (config.env === 'production') {
+      throw new ApiError(500, 'SMTP is not configured. Please set SMTP_HOST, SMTP_USER, SMTP_PASS, and SMTP_FROM_EMAIL.');
+    }
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    host: config.smtp_host,
+    port: config.smtp_port,
+    secure: config.smtp_port === 465,
+    auth: {
+      user: config.smtp_user,
+      pass: config.smtp_pass,
+    },
+  });
+};
 
 export const sendThankYouEmail = async (toEmail: string): Promise<void> => {
+  const transporter = getTransporter();
+  if (!transporter) return;
+
   const unsubscribeLink = `${config.server_url}/api/v1/subscribers/unsubscribe?email=${encodeURIComponent(toEmail)}`;
 
   const mailOptions = {
@@ -120,4 +140,48 @@ export const sendThankYouEmail = async (toEmail: string): Promise<void> => {
   };
 
   await transporter.sendMail(mailOptions);
+};
+
+export const sendVerificationEmail = async (toEmail: string, code: string): Promise<{ sent: boolean; devCode?: string }> => {
+  const transporter = getTransporter();
+  if (!transporter) {
+    console.log(`[DEV EMAIL] Blank Page verification code for ${toEmail}: ${code}`);
+    return { sent: false, devCode: code };
+  }
+
+  const mailOptions = {
+    from: `"${config.smtp_from_name}" <${config.smtp_from_email}>`,
+    to: toEmail,
+    subject: 'Your Blank Page verification code',
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Verify your email</title>
+      </head>
+      <body style="margin:0;padding:0;background:#f8fafc;font-family:Arial,sans-serif;color:#1e293b;">
+        <div style="max-width:560px;margin:40px auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;">
+          <div style="padding:32px 28px 14px;text-align:center;border-bottom:1px solid #e2e8f0;">
+            <h1 style="margin:0;font-size:24px;color:#0f172a;">Verify your Blank Page email</h1>
+          </div>
+          <div style="padding:28px;text-align:center;line-height:1.6;font-size:15px;">
+            <p style="margin:0 0 18px;">Use this 6-digit code to finish setting up backup access.</p>
+            <div style="display:inline-block;letter-spacing:8px;font-size:30px;font-weight:700;color:#0f172a;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px;margin:6px 0 18px;">
+              ${code}
+            </div>
+            <p style="margin:0;color:#64748b;font-size:13px;">This code expires in 10 minutes. If you did not request this, you can ignore this email.</p>
+          </div>
+          <div style="padding:18px 28px;text-align:center;font-size:12px;color:#94a3b8;border-top:1px solid #e2e8f0;">
+            © ${new Date().getFullYear()} Blank Page
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+  return { sent: true };
 };

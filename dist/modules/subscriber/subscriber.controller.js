@@ -16,9 +16,13 @@ exports.SubscriberController = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const subscriber_service_1 = require("./subscriber.service");
+const ApiError_1 = __importDefault(require("../../errors/ApiError"));
 const subscribe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { email } = req.body;
+    if (!email || typeof email !== 'string') {
+        throw new ApiError_1.default(400, 'Valid email is required');
+    }
     const ip = (((_a = req.headers['x-forwarded-for']) === null || _a === void 0 ? void 0 : _a.toString().split(',')[0].trim()) ||
         req.ip ||
         req.socket.remoteAddress ||
@@ -29,15 +33,53 @@ const subscribe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
         return (0, sendResponse_1.default)(res, {
             statusCode: 200,
             success: true,
-            message: 'You are already subscribed!',
-            data: { alreadySubscribed: true },
+            message: 'Verification code sent again. Please check your email.',
+            data: Object.assign({ alreadySubscribed: true, email: result.subscriber.email, isVerified: result.subscriber.isVerified }, (result.devVerificationCode ? { devVerificationCode: result.devVerificationCode } : {})),
         });
     }
     (0, sendResponse_1.default)(res, {
         statusCode: 201,
         success: true,
-        message: 'Subscribed successfully! Check your email for a confirmation.',
-        data: { alreadySubscribed: false, email: result.subscriber.email },
+        message: 'Email saved. Check your inbox for a verification code.',
+        data: Object.assign({ alreadySubscribed: false, email: result.subscriber.email, isVerified: result.subscriber.isVerified }, (result.devVerificationCode ? { devVerificationCode: result.devVerificationCode } : {})),
+    });
+}));
+const verifySubscriberEmail = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, code } = req.body;
+    if (!email || typeof email !== 'string') {
+        throw new ApiError_1.default(400, 'Valid email is required');
+    }
+    if (!code || typeof code !== 'string' || !/^\d{6}$/.test(code.trim())) {
+        throw new ApiError_1.default(400, 'Valid 6-digit verification code is required');
+    }
+    const result = yield subscriber_service_1.SubscriberService.verifySubscriberEmail(email, code);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Email verified successfully',
+        data: {
+            email: result.email,
+            isVerified: result.isVerified,
+            verifiedAt: result.verifiedAt,
+            backupToken: result.backupToken,
+        },
+    });
+}));
+const getBackupToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    if (!email || typeof email !== 'string') {
+        throw new ApiError_1.default(400, 'Valid email is required');
+    }
+    const result = yield subscriber_service_1.SubscriberService.getOrCreateBackupToken(email);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Backup token ready',
+        data: {
+            email: result.email,
+            isVerified: result.isVerified,
+            backupToken: result.backupToken,
+        },
     });
 }));
 const getSubscribers = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -172,6 +214,8 @@ const unsubscribe = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
 }));
 exports.SubscriberController = {
     subscribe,
+    verifySubscriberEmail,
+    getBackupToken,
     getSubscribers,
     updateSubscriber,
     deleteSubscriber,

@@ -143,6 +143,10 @@ exports.Prisma.SubscriberScalarFieldEnum = {
   isSubscribed: 'isSubscribed',
   isVerified: 'isVerified',
   isRegisteredUser: 'isRegisteredUser',
+  verificationCode: 'verificationCode',
+  verificationExpiresAt: 'verificationExpiresAt',
+  verifiedAt: 'verifiedAt',
+  backupToken: 'backupToken',
   ip: 'ip',
   userAgent: 'userAgent',
   country: 'country',
@@ -150,7 +154,18 @@ exports.Prisma.SubscriberScalarFieldEnum = {
   subscriptionStartDate: 'subscriptionStartDate',
   subscriptionEndDate: 'subscriptionEndDate',
   unsubscribedAt: 'unsubscribedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserBackupScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  documents: 'documents',
+  isEnabled: 'isEnabled',
+  lastSyncedAt: 'lastSyncedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -168,7 +183,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Visitor: 'Visitor',
   PublishedPage: 'PublishedPage',
-  Subscriber: 'Subscriber'
+  Subscriber: 'Subscriber',
+  UserBackup: 'UserBackup'
 };
 /**
  * Create the Client
@@ -181,7 +197,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "G:\\All Project\\blank-page\\blank-page-server\\src\\generated\\client",
+      "value": "/home/rasel/Rasel/FSD/Personal/page/blank-page-server/src/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -190,16 +206,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-3.0.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "G:\\All Project\\blank-page\\blank-page-server\\prisma\\schema.prisma",
+    "sourceFilePath": "/home/rasel/Rasel/FSD/Personal/page/blank-page-server/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
@@ -218,13 +234,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/client\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email      String    @unique\n  password   String\n  role       String    @default(\"USER\")\n  firstLogin DateTime?\n  lastLogin  DateTime?\n  loginCount Int       @default(0)\n  createdAt  DateTime  @default(now())\n  updatedAt  DateTime  @updatedAt\n}\n\nmodel Visitor {\n  id         String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  ip         String\n  userAgent  String\n  deviceType String // Mobile, Tablet, Desktop\n  browser    String\n  os         String\n  referrer   String?\n  country    String?\n  city       String?\n  visitCount Int      @default(1)\n  firstVisit DateTime @default(now())\n  lastVisit  DateTime @default(now())\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@unique([ip, userAgent])\n}\n\nmodel PublishedPage {\n  id             String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  customUrl      String    @unique\n  title          String    @default(\"Untitled\")\n  content        String\n  isEditable     Boolean   @default(false)\n  pinned         Boolean   @default(false)\n  password       String?\n  oneTimeView    Boolean   @default(false)\n  expiresAt      DateTime?\n  isDeleted      Boolean   @default(false)\n  authorId       String?\n  authorIp       String?\n  authorVisits   Int       @default(0)\n  // viewerLog: [{ip, visitCount, lastVisit}]\n  viewerLog      Json      @default(\"[]\")\n  // editorLog: [{ip, visitCount, edits: [{content, editedAt}]}]\n  editorLog      Json      @default(\"[]\")\n  authorEditsLog Json      @default(\"[]\")\n  userId         String?\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n}\n\nmodel Subscriber {\n  id                    String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email                 String    @unique\n  isSubscribed          Boolean   @default(true)\n  isVerified            Boolean   @default(false)\n  isRegisteredUser      Boolean   @default(false)\n  ip                    String\n  userAgent             String\n  country               String?\n  city                  String?\n  subscriptionStartDate DateTime? @default(now())\n  subscriptionEndDate   DateTime?\n  unsubscribedAt        DateTime?\n  createdAt             DateTime? @default(now())\n}\n",
-  "inlineSchemaHash": "3fbe2353fc5b09906224175efd184738dcd91d3de4eba77f672a0e3ba6c54a4c",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/client\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email      String    @unique\n  password   String\n  role       String    @default(\"USER\")\n  firstLogin DateTime?\n  lastLogin  DateTime?\n  loginCount Int       @default(0)\n  createdAt  DateTime  @default(now())\n  updatedAt  DateTime  @updatedAt\n}\n\nmodel Visitor {\n  id         String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  ip         String\n  userAgent  String\n  deviceType String // Mobile, Tablet, Desktop\n  browser    String\n  os         String\n  referrer   String?\n  country    String?\n  city       String?\n  visitCount Int      @default(1)\n  firstVisit DateTime @default(now())\n  lastVisit  DateTime @default(now())\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@unique([ip, userAgent])\n}\n\nmodel PublishedPage {\n  id             String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  customUrl      String    @unique\n  title          String    @default(\"Untitled\")\n  content        String\n  isEditable     Boolean   @default(false)\n  pinned         Boolean   @default(false)\n  password       String?\n  oneTimeView    Boolean   @default(false)\n  expiresAt      DateTime?\n  isDeleted      Boolean   @default(false)\n  authorId       String?\n  authorIp       String?\n  authorVisits   Int       @default(0)\n  // viewerLog: [{ip, visitCount, lastVisit}]\n  viewerLog      Json      @default(\"[]\")\n  // editorLog: [{ip, visitCount, edits: [{content, editedAt}]}]\n  editorLog      Json      @default(\"[]\")\n  authorEditsLog Json      @default(\"[]\")\n  userId         String?\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n}\n\nmodel Subscriber {\n  id                    String    @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email                 String    @unique\n  isSubscribed          Boolean   @default(true)\n  isVerified            Boolean   @default(false)\n  isRegisteredUser      Boolean   @default(false)\n  verificationCode      String?\n  verificationExpiresAt DateTime?\n  verifiedAt            DateTime?\n  backupToken           String?\n  ip                    String\n  userAgent             String\n  country               String?\n  city                  String?\n  subscriptionStartDate DateTime? @default(now())\n  subscriptionEndDate   DateTime?\n  unsubscribedAt        DateTime?\n  createdAt             DateTime? @default(now())\n  updatedAt             DateTime? @updatedAt\n}\n\nmodel UserBackup {\n  id           String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  email        String   @unique\n  documents    Json     @default(\"[]\")\n  isEnabled    Boolean  @default(true)\n  lastSyncedAt DateTime @default(now())\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n",
+  "inlineSchemaHash": "c64c070c21051153dd585bbcccb2d4ec16585cb82bd877750148f12b6a446ebd",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"loginCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Visitor\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"ip\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deviceType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"browser\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"os\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"referrer\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"visitCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"firstVisit\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastVisit\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"PublishedPage\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"customUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isEditable\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"pinned\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"oneTimeView\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isDeleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authorIp\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authorVisits\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"viewerLog\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"editorLog\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"authorEditsLog\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Subscriber\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isSubscribed\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isRegisteredUser\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"ip\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subscriptionStartDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"subscriptionEndDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"unsubscribedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"loginCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Visitor\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"ip\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deviceType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"browser\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"os\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"referrer\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"visitCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"firstVisit\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastVisit\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"PublishedPage\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"customUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isEditable\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"pinned\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"oneTimeView\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"isDeleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authorIp\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authorVisits\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"viewerLog\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"editorLog\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"authorEditsLog\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Subscriber\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isSubscribed\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isRegisteredUser\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"verificationCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"verificationExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"verifiedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"backupToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ip\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subscriptionStartDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"subscriptionEndDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"unsubscribedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"UserBackup\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"documents\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"isEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"lastSyncedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

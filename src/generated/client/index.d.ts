@@ -33,6 +33,11 @@ export type PublishedPage = $Result.DefaultSelection<Prisma.$PublishedPagePayloa
  * 
  */
 export type Subscriber = $Result.DefaultSelection<Prisma.$SubscriberPayload>
+/**
+ * Model UserBackup
+ * 
+ */
+export type UserBackup = $Result.DefaultSelection<Prisma.$UserBackupPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -158,6 +163,16 @@ export class PrismaClient<
     * ```
     */
   get subscriber(): Prisma.SubscriberDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.userBackup`: Exposes CRUD operations for the **UserBackup** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserBackups
+    * const userBackups = await prisma.userBackup.findMany()
+    * ```
+    */
+  get userBackup(): Prisma.UserBackupDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -602,7 +617,8 @@ export namespace Prisma {
     User: 'User',
     Visitor: 'Visitor',
     PublishedPage: 'PublishedPage',
-    Subscriber: 'Subscriber'
+    Subscriber: 'Subscriber',
+    UserBackup: 'UserBackup'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -621,7 +637,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "visitor" | "publishedPage" | "subscriber"
+      modelProps: "user" | "visitor" | "publishedPage" | "subscriber" | "userBackup"
       txIsolationLevel: never
     }
     model: {
@@ -921,6 +937,80 @@ export namespace Prisma {
           }
         }
       }
+      UserBackup: {
+        payload: Prisma.$UserBackupPayload<ExtArgs>
+        fields: Prisma.UserBackupFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserBackupFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserBackupFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload>
+          }
+          findFirst: {
+            args: Prisma.UserBackupFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserBackupFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload>
+          }
+          findMany: {
+            args: Prisma.UserBackupFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload>[]
+          }
+          create: {
+            args: Prisma.UserBackupCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload>
+          }
+          createMany: {
+            args: Prisma.UserBackupCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.UserBackupDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload>
+          }
+          update: {
+            args: Prisma.UserBackupUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserBackupDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserBackupUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.UserBackupUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserBackupPayload>
+          }
+          aggregate: {
+            args: Prisma.UserBackupAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserBackup>
+          }
+          groupBy: {
+            args: Prisma.UserBackupGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserBackupGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.UserBackupFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.UserBackupAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.UserBackupCountArgs<ExtArgs>
+            result: $Utils.Optional<UserBackupCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1004,6 +1094,7 @@ export namespace Prisma {
     visitor?: VisitorOmit
     publishedPage?: PublishedPageOmit
     subscriber?: SubscriberOmit
+    userBackup?: UserBackupOmit
   }
 
   /* Types for Logging */
@@ -4283,6 +4374,10 @@ export namespace Prisma {
     isSubscribed: boolean | null
     isVerified: boolean | null
     isRegisteredUser: boolean | null
+    verificationCode: string | null
+    verificationExpiresAt: Date | null
+    verifiedAt: Date | null
+    backupToken: string | null
     ip: string | null
     userAgent: string | null
     country: string | null
@@ -4291,6 +4386,7 @@ export namespace Prisma {
     subscriptionEndDate: Date | null
     unsubscribedAt: Date | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type SubscriberMaxAggregateOutputType = {
@@ -4299,6 +4395,10 @@ export namespace Prisma {
     isSubscribed: boolean | null
     isVerified: boolean | null
     isRegisteredUser: boolean | null
+    verificationCode: string | null
+    verificationExpiresAt: Date | null
+    verifiedAt: Date | null
+    backupToken: string | null
     ip: string | null
     userAgent: string | null
     country: string | null
@@ -4307,6 +4407,7 @@ export namespace Prisma {
     subscriptionEndDate: Date | null
     unsubscribedAt: Date | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type SubscriberCountAggregateOutputType = {
@@ -4315,6 +4416,10 @@ export namespace Prisma {
     isSubscribed: number
     isVerified: number
     isRegisteredUser: number
+    verificationCode: number
+    verificationExpiresAt: number
+    verifiedAt: number
+    backupToken: number
     ip: number
     userAgent: number
     country: number
@@ -4323,6 +4428,7 @@ export namespace Prisma {
     subscriptionEndDate: number
     unsubscribedAt: number
     createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -4333,6 +4439,10 @@ export namespace Prisma {
     isSubscribed?: true
     isVerified?: true
     isRegisteredUser?: true
+    verificationCode?: true
+    verificationExpiresAt?: true
+    verifiedAt?: true
+    backupToken?: true
     ip?: true
     userAgent?: true
     country?: true
@@ -4341,6 +4451,7 @@ export namespace Prisma {
     subscriptionEndDate?: true
     unsubscribedAt?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type SubscriberMaxAggregateInputType = {
@@ -4349,6 +4460,10 @@ export namespace Prisma {
     isSubscribed?: true
     isVerified?: true
     isRegisteredUser?: true
+    verificationCode?: true
+    verificationExpiresAt?: true
+    verifiedAt?: true
+    backupToken?: true
     ip?: true
     userAgent?: true
     country?: true
@@ -4357,6 +4472,7 @@ export namespace Prisma {
     subscriptionEndDate?: true
     unsubscribedAt?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type SubscriberCountAggregateInputType = {
@@ -4365,6 +4481,10 @@ export namespace Prisma {
     isSubscribed?: true
     isVerified?: true
     isRegisteredUser?: true
+    verificationCode?: true
+    verificationExpiresAt?: true
+    verifiedAt?: true
+    backupToken?: true
     ip?: true
     userAgent?: true
     country?: true
@@ -4373,6 +4493,7 @@ export namespace Prisma {
     subscriptionEndDate?: true
     unsubscribedAt?: true
     createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -4454,6 +4575,10 @@ export namespace Prisma {
     isSubscribed: boolean
     isVerified: boolean
     isRegisteredUser: boolean
+    verificationCode: string | null
+    verificationExpiresAt: Date | null
+    verifiedAt: Date | null
+    backupToken: string | null
     ip: string
     userAgent: string
     country: string | null
@@ -4462,6 +4587,7 @@ export namespace Prisma {
     subscriptionEndDate: Date | null
     unsubscribedAt: Date | null
     createdAt: Date | null
+    updatedAt: Date | null
     _count: SubscriberCountAggregateOutputType | null
     _min: SubscriberMinAggregateOutputType | null
     _max: SubscriberMaxAggregateOutputType | null
@@ -4487,6 +4613,10 @@ export namespace Prisma {
     isSubscribed?: boolean
     isVerified?: boolean
     isRegisteredUser?: boolean
+    verificationCode?: boolean
+    verificationExpiresAt?: boolean
+    verifiedAt?: boolean
+    backupToken?: boolean
     ip?: boolean
     userAgent?: boolean
     country?: boolean
@@ -4495,6 +4625,7 @@ export namespace Prisma {
     subscriptionEndDate?: boolean
     unsubscribedAt?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["subscriber"]>
 
 
@@ -4505,6 +4636,10 @@ export namespace Prisma {
     isSubscribed?: boolean
     isVerified?: boolean
     isRegisteredUser?: boolean
+    verificationCode?: boolean
+    verificationExpiresAt?: boolean
+    verifiedAt?: boolean
+    backupToken?: boolean
     ip?: boolean
     userAgent?: boolean
     country?: boolean
@@ -4513,9 +4648,10 @@ export namespace Prisma {
     subscriptionEndDate?: boolean
     unsubscribedAt?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type SubscriberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "isSubscribed" | "isVerified" | "isRegisteredUser" | "ip" | "userAgent" | "country" | "city" | "subscriptionStartDate" | "subscriptionEndDate" | "unsubscribedAt" | "createdAt", ExtArgs["result"]["subscriber"]>
+  export type SubscriberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "isSubscribed" | "isVerified" | "isRegisteredUser" | "verificationCode" | "verificationExpiresAt" | "verifiedAt" | "backupToken" | "ip" | "userAgent" | "country" | "city" | "subscriptionStartDate" | "subscriptionEndDate" | "unsubscribedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["subscriber"]>
 
   export type $SubscriberPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Subscriber"
@@ -4526,6 +4662,10 @@ export namespace Prisma {
       isSubscribed: boolean
       isVerified: boolean
       isRegisteredUser: boolean
+      verificationCode: string | null
+      verificationExpiresAt: Date | null
+      verifiedAt: Date | null
+      backupToken: string | null
       ip: string
       userAgent: string
       country: string | null
@@ -4534,6 +4674,7 @@ export namespace Prisma {
       subscriptionEndDate: Date | null
       unsubscribedAt: Date | null
       createdAt: Date | null
+      updatedAt: Date | null
     }, ExtArgs["result"]["subscriber"]>
     composites: {}
   }
@@ -4931,6 +5072,10 @@ export namespace Prisma {
     readonly isSubscribed: FieldRef<"Subscriber", 'Boolean'>
     readonly isVerified: FieldRef<"Subscriber", 'Boolean'>
     readonly isRegisteredUser: FieldRef<"Subscriber", 'Boolean'>
+    readonly verificationCode: FieldRef<"Subscriber", 'String'>
+    readonly verificationExpiresAt: FieldRef<"Subscriber", 'DateTime'>
+    readonly verifiedAt: FieldRef<"Subscriber", 'DateTime'>
+    readonly backupToken: FieldRef<"Subscriber", 'String'>
     readonly ip: FieldRef<"Subscriber", 'String'>
     readonly userAgent: FieldRef<"Subscriber", 'String'>
     readonly country: FieldRef<"Subscriber", 'String'>
@@ -4939,6 +5084,7 @@ export namespace Prisma {
     readonly subscriptionEndDate: FieldRef<"Subscriber", 'DateTime'>
     readonly unsubscribedAt: FieldRef<"Subscriber", 'DateTime'>
     readonly createdAt: FieldRef<"Subscriber", 'DateTime'>
+    readonly updatedAt: FieldRef<"Subscriber", 'DateTime'>
   }
     
 
@@ -5288,6 +5434,956 @@ export namespace Prisma {
 
 
   /**
+   * Model UserBackup
+   */
+
+  export type AggregateUserBackup = {
+    _count: UserBackupCountAggregateOutputType | null
+    _min: UserBackupMinAggregateOutputType | null
+    _max: UserBackupMaxAggregateOutputType | null
+  }
+
+  export type UserBackupMinAggregateOutputType = {
+    id: string | null
+    email: string | null
+    isEnabled: boolean | null
+    lastSyncedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserBackupMaxAggregateOutputType = {
+    id: string | null
+    email: string | null
+    isEnabled: boolean | null
+    lastSyncedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type UserBackupCountAggregateOutputType = {
+    id: number
+    email: number
+    documents: number
+    isEnabled: number
+    lastSyncedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type UserBackupMinAggregateInputType = {
+    id?: true
+    email?: true
+    isEnabled?: true
+    lastSyncedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserBackupMaxAggregateInputType = {
+    id?: true
+    email?: true
+    isEnabled?: true
+    lastSyncedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type UserBackupCountAggregateInputType = {
+    id?: true
+    email?: true
+    documents?: true
+    isEnabled?: true
+    lastSyncedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type UserBackupAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserBackup to aggregate.
+     */
+    where?: UserBackupWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserBackups to fetch.
+     */
+    orderBy?: UserBackupOrderByWithRelationInput | UserBackupOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserBackupWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserBackups from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserBackups.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserBackups
+    **/
+    _count?: true | UserBackupCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserBackupMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserBackupMaxAggregateInputType
+  }
+
+  export type GetUserBackupAggregateType<T extends UserBackupAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserBackup]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserBackup[P]>
+      : GetScalarType<T[P], AggregateUserBackup[P]>
+  }
+
+
+
+
+  export type UserBackupGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserBackupWhereInput
+    orderBy?: UserBackupOrderByWithAggregationInput | UserBackupOrderByWithAggregationInput[]
+    by: UserBackupScalarFieldEnum[] | UserBackupScalarFieldEnum
+    having?: UserBackupScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserBackupCountAggregateInputType | true
+    _min?: UserBackupMinAggregateInputType
+    _max?: UserBackupMaxAggregateInputType
+  }
+
+  export type UserBackupGroupByOutputType = {
+    id: string
+    email: string
+    documents: JsonValue
+    isEnabled: boolean
+    lastSyncedAt: Date
+    createdAt: Date
+    updatedAt: Date
+    _count: UserBackupCountAggregateOutputType | null
+    _min: UserBackupMinAggregateOutputType | null
+    _max: UserBackupMaxAggregateOutputType | null
+  }
+
+  type GetUserBackupGroupByPayload<T extends UserBackupGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserBackupGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserBackupGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserBackupGroupByOutputType[P]>
+            : GetScalarType<T[P], UserBackupGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserBackupSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    documents?: boolean
+    isEnabled?: boolean
+    lastSyncedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["userBackup"]>
+
+
+
+  export type UserBackupSelectScalar = {
+    id?: boolean
+    email?: boolean
+    documents?: boolean
+    isEnabled?: boolean
+    lastSyncedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type UserBackupOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "documents" | "isEnabled" | "lastSyncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userBackup"]>
+
+  export type $UserBackupPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserBackup"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      email: string
+      documents: Prisma.JsonValue
+      isEnabled: boolean
+      lastSyncedAt: Date
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["userBackup"]>
+    composites: {}
+  }
+
+  type UserBackupGetPayload<S extends boolean | null | undefined | UserBackupDefaultArgs> = $Result.GetResult<Prisma.$UserBackupPayload, S>
+
+  type UserBackupCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserBackupFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UserBackupCountAggregateInputType | true
+    }
+
+  export interface UserBackupDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserBackup'], meta: { name: 'UserBackup' } }
+    /**
+     * Find zero or one UserBackup that matches the filter.
+     * @param {UserBackupFindUniqueArgs} args - Arguments to find a UserBackup
+     * @example
+     * // Get one UserBackup
+     * const userBackup = await prisma.userBackup.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserBackupFindUniqueArgs>(args: SelectSubset<T, UserBackupFindUniqueArgs<ExtArgs>>): Prisma__UserBackupClient<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UserBackup that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UserBackupFindUniqueOrThrowArgs} args - Arguments to find a UserBackup
+     * @example
+     * // Get one UserBackup
+     * const userBackup = await prisma.userBackup.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserBackupFindUniqueOrThrowArgs>(args: SelectSubset<T, UserBackupFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserBackupClient<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserBackup that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBackupFindFirstArgs} args - Arguments to find a UserBackup
+     * @example
+     * // Get one UserBackup
+     * const userBackup = await prisma.userBackup.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserBackupFindFirstArgs>(args?: SelectSubset<T, UserBackupFindFirstArgs<ExtArgs>>): Prisma__UserBackupClient<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserBackup that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBackupFindFirstOrThrowArgs} args - Arguments to find a UserBackup
+     * @example
+     * // Get one UserBackup
+     * const userBackup = await prisma.userBackup.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserBackupFindFirstOrThrowArgs>(args?: SelectSubset<T, UserBackupFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserBackupClient<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserBackups that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBackupFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserBackups
+     * const userBackups = await prisma.userBackup.findMany()
+     * 
+     * // Get first 10 UserBackups
+     * const userBackups = await prisma.userBackup.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userBackupWithIdOnly = await prisma.userBackup.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserBackupFindManyArgs>(args?: SelectSubset<T, UserBackupFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UserBackup.
+     * @param {UserBackupCreateArgs} args - Arguments to create a UserBackup.
+     * @example
+     * // Create one UserBackup
+     * const UserBackup = await prisma.userBackup.create({
+     *   data: {
+     *     // ... data to create a UserBackup
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserBackupCreateArgs>(args: SelectSubset<T, UserBackupCreateArgs<ExtArgs>>): Prisma__UserBackupClient<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UserBackups.
+     * @param {UserBackupCreateManyArgs} args - Arguments to create many UserBackups.
+     * @example
+     * // Create many UserBackups
+     * const userBackup = await prisma.userBackup.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserBackupCreateManyArgs>(args?: SelectSubset<T, UserBackupCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a UserBackup.
+     * @param {UserBackupDeleteArgs} args - Arguments to delete one UserBackup.
+     * @example
+     * // Delete one UserBackup
+     * const UserBackup = await prisma.userBackup.delete({
+     *   where: {
+     *     // ... filter to delete one UserBackup
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserBackupDeleteArgs>(args: SelectSubset<T, UserBackupDeleteArgs<ExtArgs>>): Prisma__UserBackupClient<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UserBackup.
+     * @param {UserBackupUpdateArgs} args - Arguments to update one UserBackup.
+     * @example
+     * // Update one UserBackup
+     * const userBackup = await prisma.userBackup.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserBackupUpdateArgs>(args: SelectSubset<T, UserBackupUpdateArgs<ExtArgs>>): Prisma__UserBackupClient<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UserBackups.
+     * @param {UserBackupDeleteManyArgs} args - Arguments to filter UserBackups to delete.
+     * @example
+     * // Delete a few UserBackups
+     * const { count } = await prisma.userBackup.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserBackupDeleteManyArgs>(args?: SelectSubset<T, UserBackupDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserBackups.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBackupUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserBackups
+     * const userBackup = await prisma.userBackup.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserBackupUpdateManyArgs>(args: SelectSubset<T, UserBackupUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one UserBackup.
+     * @param {UserBackupUpsertArgs} args - Arguments to update or create a UserBackup.
+     * @example
+     * // Update or create a UserBackup
+     * const userBackup = await prisma.userBackup.upsert({
+     *   create: {
+     *     // ... data to create a UserBackup
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserBackup we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserBackupUpsertArgs>(args: SelectSubset<T, UserBackupUpsertArgs<ExtArgs>>): Prisma__UserBackupClient<$Result.GetResult<Prisma.$UserBackupPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserBackups that matches the filter.
+     * @param {UserBackupFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const userBackup = await prisma.userBackup.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: UserBackupFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a UserBackup.
+     * @param {UserBackupAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const userBackup = await prisma.userBackup.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: UserBackupAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of UserBackups.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBackupCountArgs} args - Arguments to filter UserBackups to count.
+     * @example
+     * // Count the number of UserBackups
+     * const count = await prisma.userBackup.count({
+     *   where: {
+     *     // ... the filter for the UserBackups we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserBackupCountArgs>(
+      args?: Subset<T, UserBackupCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserBackupCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserBackup.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBackupAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserBackupAggregateArgs>(args: Subset<T, UserBackupAggregateArgs>): Prisma.PrismaPromise<GetUserBackupAggregateType<T>>
+
+    /**
+     * Group by UserBackup.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserBackupGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserBackupGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserBackupGroupByArgs['orderBy'] }
+        : { orderBy?: UserBackupGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserBackupGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserBackupGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserBackup model
+   */
+  readonly fields: UserBackupFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserBackup.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserBackupClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserBackup model
+   */
+  interface UserBackupFieldRefs {
+    readonly id: FieldRef<"UserBackup", 'String'>
+    readonly email: FieldRef<"UserBackup", 'String'>
+    readonly documents: FieldRef<"UserBackup", 'Json'>
+    readonly isEnabled: FieldRef<"UserBackup", 'Boolean'>
+    readonly lastSyncedAt: FieldRef<"UserBackup", 'DateTime'>
+    readonly createdAt: FieldRef<"UserBackup", 'DateTime'>
+    readonly updatedAt: FieldRef<"UserBackup", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserBackup findUnique
+   */
+  export type UserBackupFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * Filter, which UserBackup to fetch.
+     */
+    where: UserBackupWhereUniqueInput
+  }
+
+  /**
+   * UserBackup findUniqueOrThrow
+   */
+  export type UserBackupFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * Filter, which UserBackup to fetch.
+     */
+    where: UserBackupWhereUniqueInput
+  }
+
+  /**
+   * UserBackup findFirst
+   */
+  export type UserBackupFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * Filter, which UserBackup to fetch.
+     */
+    where?: UserBackupWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserBackups to fetch.
+     */
+    orderBy?: UserBackupOrderByWithRelationInput | UserBackupOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserBackups.
+     */
+    cursor?: UserBackupWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserBackups from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserBackups.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserBackups.
+     */
+    distinct?: UserBackupScalarFieldEnum | UserBackupScalarFieldEnum[]
+  }
+
+  /**
+   * UserBackup findFirstOrThrow
+   */
+  export type UserBackupFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * Filter, which UserBackup to fetch.
+     */
+    where?: UserBackupWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserBackups to fetch.
+     */
+    orderBy?: UserBackupOrderByWithRelationInput | UserBackupOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserBackups.
+     */
+    cursor?: UserBackupWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserBackups from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserBackups.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserBackups.
+     */
+    distinct?: UserBackupScalarFieldEnum | UserBackupScalarFieldEnum[]
+  }
+
+  /**
+   * UserBackup findMany
+   */
+  export type UserBackupFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * Filter, which UserBackups to fetch.
+     */
+    where?: UserBackupWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserBackups to fetch.
+     */
+    orderBy?: UserBackupOrderByWithRelationInput | UserBackupOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserBackups.
+     */
+    cursor?: UserBackupWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserBackups from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserBackups.
+     */
+    skip?: number
+    distinct?: UserBackupScalarFieldEnum | UserBackupScalarFieldEnum[]
+  }
+
+  /**
+   * UserBackup create
+   */
+  export type UserBackupCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * The data needed to create a UserBackup.
+     */
+    data: XOR<UserBackupCreateInput, UserBackupUncheckedCreateInput>
+  }
+
+  /**
+   * UserBackup createMany
+   */
+  export type UserBackupCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserBackups.
+     */
+    data: UserBackupCreateManyInput | UserBackupCreateManyInput[]
+  }
+
+  /**
+   * UserBackup update
+   */
+  export type UserBackupUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * The data needed to update a UserBackup.
+     */
+    data: XOR<UserBackupUpdateInput, UserBackupUncheckedUpdateInput>
+    /**
+     * Choose, which UserBackup to update.
+     */
+    where: UserBackupWhereUniqueInput
+  }
+
+  /**
+   * UserBackup updateMany
+   */
+  export type UserBackupUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserBackups.
+     */
+    data: XOR<UserBackupUpdateManyMutationInput, UserBackupUncheckedUpdateManyInput>
+    /**
+     * Filter which UserBackups to update
+     */
+    where?: UserBackupWhereInput
+    /**
+     * Limit how many UserBackups to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserBackup upsert
+   */
+  export type UserBackupUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * The filter to search for the UserBackup to update in case it exists.
+     */
+    where: UserBackupWhereUniqueInput
+    /**
+     * In case the UserBackup found by the `where` argument doesn't exist, create a new UserBackup with this data.
+     */
+    create: XOR<UserBackupCreateInput, UserBackupUncheckedCreateInput>
+    /**
+     * In case the UserBackup was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserBackupUpdateInput, UserBackupUncheckedUpdateInput>
+  }
+
+  /**
+   * UserBackup delete
+   */
+  export type UserBackupDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+    /**
+     * Filter which UserBackup to delete.
+     */
+    where: UserBackupWhereUniqueInput
+  }
+
+  /**
+   * UserBackup deleteMany
+   */
+  export type UserBackupDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserBackups to delete
+     */
+    where?: UserBackupWhereInput
+    /**
+     * Limit how many UserBackups to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserBackup findRaw
+   */
+  export type UserBackupFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * UserBackup aggregateRaw
+   */
+  export type UserBackupAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * UserBackup without action
+   */
+  export type UserBackupDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserBackup
+     */
+    select?: UserBackupSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserBackup
+     */
+    omit?: UserBackupOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5357,6 +6453,10 @@ export namespace Prisma {
     isSubscribed: 'isSubscribed',
     isVerified: 'isVerified',
     isRegisteredUser: 'isRegisteredUser',
+    verificationCode: 'verificationCode',
+    verificationExpiresAt: 'verificationExpiresAt',
+    verifiedAt: 'verifiedAt',
+    backupToken: 'backupToken',
     ip: 'ip',
     userAgent: 'userAgent',
     country: 'country',
@@ -5364,10 +6464,24 @@ export namespace Prisma {
     subscriptionStartDate: 'subscriptionStartDate',
     subscriptionEndDate: 'subscriptionEndDate',
     unsubscribedAt: 'unsubscribedAt',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type SubscriberScalarFieldEnum = (typeof SubscriberScalarFieldEnum)[keyof typeof SubscriberScalarFieldEnum]
+
+
+  export const UserBackupScalarFieldEnum: {
+    id: 'id',
+    email: 'email',
+    documents: 'documents',
+    isEnabled: 'isEnabled',
+    lastSyncedAt: 'lastSyncedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type UserBackupScalarFieldEnum = (typeof UserBackupScalarFieldEnum)[keyof typeof UserBackupScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -5771,6 +6885,10 @@ export namespace Prisma {
     isSubscribed?: BoolFilter<"Subscriber"> | boolean
     isVerified?: BoolFilter<"Subscriber"> | boolean
     isRegisteredUser?: BoolFilter<"Subscriber"> | boolean
+    verificationCode?: StringNullableFilter<"Subscriber"> | string | null
+    verificationExpiresAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
+    verifiedAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
+    backupToken?: StringNullableFilter<"Subscriber"> | string | null
     ip?: StringFilter<"Subscriber"> | string
     userAgent?: StringFilter<"Subscriber"> | string
     country?: StringNullableFilter<"Subscriber"> | string | null
@@ -5779,6 +6897,7 @@ export namespace Prisma {
     subscriptionEndDate?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
     unsubscribedAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
     createdAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
+    updatedAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
   }
 
   export type SubscriberOrderByWithRelationInput = {
@@ -5787,6 +6906,10 @@ export namespace Prisma {
     isSubscribed?: SortOrder
     isVerified?: SortOrder
     isRegisteredUser?: SortOrder
+    verificationCode?: SortOrder
+    verificationExpiresAt?: SortOrder
+    verifiedAt?: SortOrder
+    backupToken?: SortOrder
     ip?: SortOrder
     userAgent?: SortOrder
     country?: SortOrder
@@ -5795,6 +6918,7 @@ export namespace Prisma {
     subscriptionEndDate?: SortOrder
     unsubscribedAt?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SubscriberWhereUniqueInput = Prisma.AtLeast<{
@@ -5806,6 +6930,10 @@ export namespace Prisma {
     isSubscribed?: BoolFilter<"Subscriber"> | boolean
     isVerified?: BoolFilter<"Subscriber"> | boolean
     isRegisteredUser?: BoolFilter<"Subscriber"> | boolean
+    verificationCode?: StringNullableFilter<"Subscriber"> | string | null
+    verificationExpiresAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
+    verifiedAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
+    backupToken?: StringNullableFilter<"Subscriber"> | string | null
     ip?: StringFilter<"Subscriber"> | string
     userAgent?: StringFilter<"Subscriber"> | string
     country?: StringNullableFilter<"Subscriber"> | string | null
@@ -5814,6 +6942,7 @@ export namespace Prisma {
     subscriptionEndDate?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
     unsubscribedAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
     createdAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
+    updatedAt?: DateTimeNullableFilter<"Subscriber"> | Date | string | null
   }, "id" | "email">
 
   export type SubscriberOrderByWithAggregationInput = {
@@ -5822,6 +6951,10 @@ export namespace Prisma {
     isSubscribed?: SortOrder
     isVerified?: SortOrder
     isRegisteredUser?: SortOrder
+    verificationCode?: SortOrder
+    verificationExpiresAt?: SortOrder
+    verifiedAt?: SortOrder
+    backupToken?: SortOrder
     ip?: SortOrder
     userAgent?: SortOrder
     country?: SortOrder
@@ -5830,6 +6963,7 @@ export namespace Prisma {
     subscriptionEndDate?: SortOrder
     unsubscribedAt?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: SubscriberCountOrderByAggregateInput
     _max?: SubscriberMaxOrderByAggregateInput
     _min?: SubscriberMinOrderByAggregateInput
@@ -5844,6 +6978,10 @@ export namespace Prisma {
     isSubscribed?: BoolWithAggregatesFilter<"Subscriber"> | boolean
     isVerified?: BoolWithAggregatesFilter<"Subscriber"> | boolean
     isRegisteredUser?: BoolWithAggregatesFilter<"Subscriber"> | boolean
+    verificationCode?: StringNullableWithAggregatesFilter<"Subscriber"> | string | null
+    verificationExpiresAt?: DateTimeNullableWithAggregatesFilter<"Subscriber"> | Date | string | null
+    verifiedAt?: DateTimeNullableWithAggregatesFilter<"Subscriber"> | Date | string | null
+    backupToken?: StringNullableWithAggregatesFilter<"Subscriber"> | string | null
     ip?: StringWithAggregatesFilter<"Subscriber"> | string
     userAgent?: StringWithAggregatesFilter<"Subscriber"> | string
     country?: StringNullableWithAggregatesFilter<"Subscriber"> | string | null
@@ -5852,6 +6990,69 @@ export namespace Prisma {
     subscriptionEndDate?: DateTimeNullableWithAggregatesFilter<"Subscriber"> | Date | string | null
     unsubscribedAt?: DateTimeNullableWithAggregatesFilter<"Subscriber"> | Date | string | null
     createdAt?: DateTimeNullableWithAggregatesFilter<"Subscriber"> | Date | string | null
+    updatedAt?: DateTimeNullableWithAggregatesFilter<"Subscriber"> | Date | string | null
+  }
+
+  export type UserBackupWhereInput = {
+    AND?: UserBackupWhereInput | UserBackupWhereInput[]
+    OR?: UserBackupWhereInput[]
+    NOT?: UserBackupWhereInput | UserBackupWhereInput[]
+    id?: StringFilter<"UserBackup"> | string
+    email?: StringFilter<"UserBackup"> | string
+    documents?: JsonFilter<"UserBackup">
+    isEnabled?: BoolFilter<"UserBackup"> | boolean
+    lastSyncedAt?: DateTimeFilter<"UserBackup"> | Date | string
+    createdAt?: DateTimeFilter<"UserBackup"> | Date | string
+    updatedAt?: DateTimeFilter<"UserBackup"> | Date | string
+  }
+
+  export type UserBackupOrderByWithRelationInput = {
+    id?: SortOrder
+    email?: SortOrder
+    documents?: SortOrder
+    isEnabled?: SortOrder
+    lastSyncedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserBackupWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    email?: string
+    AND?: UserBackupWhereInput | UserBackupWhereInput[]
+    OR?: UserBackupWhereInput[]
+    NOT?: UserBackupWhereInput | UserBackupWhereInput[]
+    documents?: JsonFilter<"UserBackup">
+    isEnabled?: BoolFilter<"UserBackup"> | boolean
+    lastSyncedAt?: DateTimeFilter<"UserBackup"> | Date | string
+    createdAt?: DateTimeFilter<"UserBackup"> | Date | string
+    updatedAt?: DateTimeFilter<"UserBackup"> | Date | string
+  }, "id" | "email">
+
+  export type UserBackupOrderByWithAggregationInput = {
+    id?: SortOrder
+    email?: SortOrder
+    documents?: SortOrder
+    isEnabled?: SortOrder
+    lastSyncedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: UserBackupCountOrderByAggregateInput
+    _max?: UserBackupMaxOrderByAggregateInput
+    _min?: UserBackupMinOrderByAggregateInput
+  }
+
+  export type UserBackupScalarWhereWithAggregatesInput = {
+    AND?: UserBackupScalarWhereWithAggregatesInput | UserBackupScalarWhereWithAggregatesInput[]
+    OR?: UserBackupScalarWhereWithAggregatesInput[]
+    NOT?: UserBackupScalarWhereWithAggregatesInput | UserBackupScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UserBackup"> | string
+    email?: StringWithAggregatesFilter<"UserBackup"> | string
+    documents?: JsonWithAggregatesFilter<"UserBackup">
+    isEnabled?: BoolWithAggregatesFilter<"UserBackup"> | boolean
+    lastSyncedAt?: DateTimeWithAggregatesFilter<"UserBackup"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"UserBackup"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"UserBackup"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -6205,6 +7406,10 @@ export namespace Prisma {
     isSubscribed?: boolean
     isVerified?: boolean
     isRegisteredUser?: boolean
+    verificationCode?: string | null
+    verificationExpiresAt?: Date | string | null
+    verifiedAt?: Date | string | null
+    backupToken?: string | null
     ip: string
     userAgent: string
     country?: string | null
@@ -6213,6 +7418,7 @@ export namespace Prisma {
     subscriptionEndDate?: Date | string | null
     unsubscribedAt?: Date | string | null
     createdAt?: Date | string | null
+    updatedAt?: Date | string | null
   }
 
   export type SubscriberUncheckedCreateInput = {
@@ -6221,6 +7427,10 @@ export namespace Prisma {
     isSubscribed?: boolean
     isVerified?: boolean
     isRegisteredUser?: boolean
+    verificationCode?: string | null
+    verificationExpiresAt?: Date | string | null
+    verifiedAt?: Date | string | null
+    backupToken?: string | null
     ip: string
     userAgent: string
     country?: string | null
@@ -6229,6 +7439,7 @@ export namespace Prisma {
     subscriptionEndDate?: Date | string | null
     unsubscribedAt?: Date | string | null
     createdAt?: Date | string | null
+    updatedAt?: Date | string | null
   }
 
   export type SubscriberUpdateInput = {
@@ -6236,6 +7447,10 @@ export namespace Prisma {
     isSubscribed?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isRegisteredUser?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    backupToken?: NullableStringFieldUpdateOperationsInput | string | null
     ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6244,6 +7459,7 @@ export namespace Prisma {
     subscriptionEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unsubscribedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SubscriberUncheckedUpdateInput = {
@@ -6251,6 +7467,10 @@ export namespace Prisma {
     isSubscribed?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isRegisteredUser?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    backupToken?: NullableStringFieldUpdateOperationsInput | string | null
     ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6259,6 +7479,7 @@ export namespace Prisma {
     subscriptionEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unsubscribedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SubscriberCreateManyInput = {
@@ -6267,6 +7488,10 @@ export namespace Prisma {
     isSubscribed?: boolean
     isVerified?: boolean
     isRegisteredUser?: boolean
+    verificationCode?: string | null
+    verificationExpiresAt?: Date | string | null
+    verifiedAt?: Date | string | null
+    backupToken?: string | null
     ip: string
     userAgent: string
     country?: string | null
@@ -6275,6 +7500,7 @@ export namespace Prisma {
     subscriptionEndDate?: Date | string | null
     unsubscribedAt?: Date | string | null
     createdAt?: Date | string | null
+    updatedAt?: Date | string | null
   }
 
   export type SubscriberUpdateManyMutationInput = {
@@ -6282,6 +7508,10 @@ export namespace Prisma {
     isSubscribed?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isRegisteredUser?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    backupToken?: NullableStringFieldUpdateOperationsInput | string | null
     ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6290,6 +7520,7 @@ export namespace Prisma {
     subscriptionEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unsubscribedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SubscriberUncheckedUpdateManyInput = {
@@ -6297,6 +7528,10 @@ export namespace Prisma {
     isSubscribed?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isRegisteredUser?: BoolFieldUpdateOperationsInput | boolean
+    verificationCode?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    backupToken?: NullableStringFieldUpdateOperationsInput | string | null
     ip?: StringFieldUpdateOperationsInput | string
     userAgent?: StringFieldUpdateOperationsInput | string
     country?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6305,6 +7540,73 @@ export namespace Prisma {
     subscriptionEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     unsubscribedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type UserBackupCreateInput = {
+    id?: string
+    email: string
+    documents?: InputJsonValue
+    isEnabled?: boolean
+    lastSyncedAt?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserBackupUncheckedCreateInput = {
+    id?: string
+    email: string
+    documents?: InputJsonValue
+    isEnabled?: boolean
+    lastSyncedAt?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserBackupUpdateInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    documents?: InputJsonValue | InputJsonValue
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserBackupUncheckedUpdateInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    documents?: InputJsonValue | InputJsonValue
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserBackupCreateManyInput = {
+    id?: string
+    email: string
+    documents?: InputJsonValue
+    isEnabled?: boolean
+    lastSyncedAt?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserBackupUpdateManyMutationInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    documents?: InputJsonValue | InputJsonValue
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserBackupUncheckedUpdateManyInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    documents?: InputJsonValue | InputJsonValue
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    lastSyncedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -6674,6 +7976,10 @@ export namespace Prisma {
     isSubscribed?: SortOrder
     isVerified?: SortOrder
     isRegisteredUser?: SortOrder
+    verificationCode?: SortOrder
+    verificationExpiresAt?: SortOrder
+    verifiedAt?: SortOrder
+    backupToken?: SortOrder
     ip?: SortOrder
     userAgent?: SortOrder
     country?: SortOrder
@@ -6682,6 +7988,7 @@ export namespace Prisma {
     subscriptionEndDate?: SortOrder
     unsubscribedAt?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SubscriberMaxOrderByAggregateInput = {
@@ -6690,6 +7997,10 @@ export namespace Prisma {
     isSubscribed?: SortOrder
     isVerified?: SortOrder
     isRegisteredUser?: SortOrder
+    verificationCode?: SortOrder
+    verificationExpiresAt?: SortOrder
+    verifiedAt?: SortOrder
+    backupToken?: SortOrder
     ip?: SortOrder
     userAgent?: SortOrder
     country?: SortOrder
@@ -6698,6 +8009,7 @@ export namespace Prisma {
     subscriptionEndDate?: SortOrder
     unsubscribedAt?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SubscriberMinOrderByAggregateInput = {
@@ -6706,6 +8018,10 @@ export namespace Prisma {
     isSubscribed?: SortOrder
     isVerified?: SortOrder
     isRegisteredUser?: SortOrder
+    verificationCode?: SortOrder
+    verificationExpiresAt?: SortOrder
+    verifiedAt?: SortOrder
+    backupToken?: SortOrder
     ip?: SortOrder
     userAgent?: SortOrder
     country?: SortOrder
@@ -6714,6 +8030,35 @@ export namespace Prisma {
     subscriptionEndDate?: SortOrder
     unsubscribedAt?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserBackupCountOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    documents?: SortOrder
+    isEnabled?: SortOrder
+    lastSyncedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserBackupMaxOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    isEnabled?: SortOrder
+    lastSyncedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserBackupMinOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    isEnabled?: SortOrder
+    lastSyncedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type StringFieldUpdateOperationsInput = {

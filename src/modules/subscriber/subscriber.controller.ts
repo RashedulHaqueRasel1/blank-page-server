@@ -2,9 +2,14 @@ import { Request, Response } from 'express';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { SubscriberService } from './subscriber.service';
+import ApiError from '../../errors/ApiError';
 
 const subscribe = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.body;
+
+  if (!email || typeof email !== 'string') {
+    throw new ApiError(400, 'Valid email is required');
+  }
 
   const ip = (
     req.headers['x-forwarded-for']?.toString().split(',')[0].trim() ||
@@ -20,16 +25,73 @@ const subscribe = catchAsync(async (req: Request, res: Response) => {
     return sendResponse(res, {
       statusCode: 200,
       success: true,
-      message: 'You are already subscribed!',
-      data: { alreadySubscribed: true },
+      message: 'Verification code sent again. Please check your email.',
+      data: {
+        alreadySubscribed: true,
+        email: result.subscriber.email,
+        isVerified: result.subscriber.isVerified,
+        ...(result.devVerificationCode ? { devVerificationCode: result.devVerificationCode } : {}),
+      },
     });
   }
 
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: 'Subscribed successfully! Check your email for a confirmation.',
-    data: { alreadySubscribed: false, email: result.subscriber.email },
+    message: 'Email saved. Check your inbox for a verification code.',
+    data: {
+      alreadySubscribed: false,
+      email: result.subscriber.email,
+      isVerified: result.subscriber.isVerified,
+      ...(result.devVerificationCode ? { devVerificationCode: result.devVerificationCode } : {}),
+    },
+  });
+});
+
+const verifySubscriberEmail = catchAsync(async (req: Request, res: Response) => {
+  const { email, code } = req.body;
+
+  if (!email || typeof email !== 'string') {
+    throw new ApiError(400, 'Valid email is required');
+  }
+
+  if (!code || typeof code !== 'string' || !/^\d{6}$/.test(code.trim())) {
+    throw new ApiError(400, 'Valid 6-digit verification code is required');
+  }
+
+  const result = await SubscriberService.verifySubscriberEmail(email, code);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Email verified successfully',
+    data: {
+      email: result.email,
+      isVerified: result.isVerified,
+      verifiedAt: result.verifiedAt,
+      backupToken: result.backupToken,
+    },
+  });
+});
+
+const getBackupToken = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  if (!email || typeof email !== 'string') {
+    throw new ApiError(400, 'Valid email is required');
+  }
+
+  const result = await SubscriberService.getOrCreateBackupToken(email);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Backup token ready',
+    data: {
+      email: result.email,
+      isVerified: result.isVerified,
+      backupToken: result.backupToken,
+    },
   });
 });
 
@@ -178,6 +240,8 @@ const unsubscribe = catchAsync(async (req: Request, res: Response) => {
 
 export const SubscriberController = {
   subscribe,
+  verifySubscriberEmail,
+  getBackupToken,
   getSubscribers,
   updateSubscriber,
   deleteSubscriber,

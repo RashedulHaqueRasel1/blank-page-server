@@ -69,6 +69,10 @@ model Subscriber {
   isSubscribed          Boolean   @default(true)
   isVerified            Boolean   @default(false)
   isRegisteredUser      Boolean   @default(false)
+  verificationCode      String?
+  verificationExpiresAt DateTime?
+  verifiedAt            DateTime?
+  backupToken           String?
   ip                    String
   userAgent             String
   country               String?
@@ -77,4 +81,15 @@ model Subscriber {
   subscriptionEndDate   DateTime?
   unsubscribedAt        DateTime?
   createdAt             DateTime? @default(now())
+  updatedAt             DateTime? @updatedAt
+}
+
+model UserBackup {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  documents    Json     @default("[]")
+  isEnabled    Boolean  @default(true)
+  lastSyncedAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

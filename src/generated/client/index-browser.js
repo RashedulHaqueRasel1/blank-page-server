@@ -171,6 +171,10 @@ exports.Prisma.SubscriberScalarFieldEnum = {
   isSubscribed: 'isSubscribed',
   isVerified: 'isVerified',
   isRegisteredUser: 'isRegisteredUser',
+  verificationCode: 'verificationCode',
+  verificationExpiresAt: 'verificationExpiresAt',
+  verifiedAt: 'verifiedAt',
+  backupToken: 'backupToken',
   ip: 'ip',
   userAgent: 'userAgent',
   country: 'country',
@@ -178,7 +182,18 @@ exports.Prisma.SubscriberScalarFieldEnum = {
   subscriptionStartDate: 'subscriptionStartDate',
   subscriptionEndDate: 'subscriptionEndDate',
   unsubscribedAt: 'unsubscribedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserBackupScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  documents: 'documents',
+  isEnabled: 'isEnabled',
+  lastSyncedAt: 'lastSyncedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -196,7 +211,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Visitor: 'Visitor',
   PublishedPage: 'PublishedPage',
-  Subscriber: 'Subscriber'
+  Subscriber: 'Subscriber',
+  UserBackup: 'UserBackup'
 };
 
 /**

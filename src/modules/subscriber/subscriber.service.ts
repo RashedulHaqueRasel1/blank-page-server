@@ -1,6 +1,8 @@
 import prisma from '../../lib/prisma';
-import { sendThankYouEmail } from '../../utils/mailer';
+import { sendVerificationEmail } from '../../utils/mailer';
 import config from '../../config';
+import ApiError from '../../errors/ApiError';
+import crypto from 'crypto';
 
 const fetchGeoLocation = async (ip: string, subscriberId: string) => {
   try {
@@ -36,43 +38,123 @@ const fetchGeoLocation = async (ip: string, subscriberId: string) => {
 };
 
 const subscribe = async (email: string, ip: string, userAgent: string) => {
-  // Check if already subscribed
-  const existing = await prisma.subscriber.findUnique({ where: { email } });
-  if (existing) {
-    return { alreadySubscribed: true, subscriber: existing };
-  }
+  const normalizedEmail = email.trim().toLowerCase();
+  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const verificationExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   // Check if email belongs to a registered user
-  const registeredUser = await prisma.user.findUnique({ where: { email } });
+  const registeredUser = await prisma.user.findUnique({ where: { email: normalizedEmail } });
 
   const normalizedIp = ip === '::ffff:127.0.0.1' ? '127.0.0.1' : ip;
 
   // Subscription end date: 2030-12-31
   const subscriptionEndDate = new Date('2030-12-31T23:59:59.000Z');
 
-  const subscriber = await prisma.subscriber.create({
-    data: {
-      email,
+  const existing = await prisma.subscriber.findUnique({ where: { email: normalizedEmail } });
+
+  const subscriber = existing
+    ? await prisma.subscriber.update({
+        where: { email: normalizedEmail },
+        data: {
+          isSubscribed: true,
+          isRegisteredUser: !!registeredUser,
+          verificationCode,
+          verificationExpiresAt,
+          ip: normalizedIp,
+          userAgent,
+          subscriptionEndDate,
+          unsubscribedAt: null,
+        },
+      })
+    : await prisma.subscriber.create({
+      data: {
+      email: normalizedEmail,
       isSubscribed: true,
       isRegisteredUser: !!registeredUser,
+      verificationCode,
+      verificationExpiresAt,
       ip: normalizedIp,
       userAgent,
       country: 'Fetching...',
       city: 'Fetching...',
       subscriptionStartDate: new Date(),
       subscriptionEndDate,
-    },
-  });
+      },
+    });
 
   // Fetch geo in background
   fetchGeoLocation(normalizedIp, subscriber.id);
 
-  // Send thank you email in background
-  sendThankYouEmail(email).catch((err) => {
-    console.error('Failed to send thank you email:', err);
+  const emailResult = await sendVerificationEmail(normalizedEmail, verificationCode);
+
+  return { alreadySubscribed: !!existing, subscriber, devVerificationCode: emailResult.devCode };
+};
+
+const verifySubscriberEmail = async (email: string, code: string) => {
+  const normalizedEmail = email.trim().toLowerCase();
+  const subscriber = await prisma.subscriber.findUnique({ where: { email: normalizedEmail } });
+
+  if (!subscriber) {
+    throw new ApiError(404, 'Subscriber not found');
+  }
+
+  if (subscriber.isVerified) {
+    if (subscriber.backupToken) {
+      return subscriber;
+    }
+
+    return prisma.subscriber.update({
+      where: { email: normalizedEmail },
+      data: { backupToken: crypto.randomBytes(32).toString('hex') },
+    });
+  }
+
+  if (!subscriber.verificationCode || !subscriber.verificationExpiresAt) {
+    throw new ApiError(400, 'No verification code found. Please request a new code.');
+  }
+
+  if (subscriber.verificationExpiresAt < new Date()) {
+    throw new ApiError(400, 'Verification code expired. Please request a new code.');
+  }
+
+  if (subscriber.verificationCode !== code.trim()) {
+    throw new ApiError(400, 'Invalid verification code');
+  }
+
+  const verifiedSubscriber = await prisma.subscriber.update({
+    where: { email: normalizedEmail },
+    data: {
+      isVerified: true,
+      verifiedAt: new Date(),
+      verificationCode: null,
+      verificationExpiresAt: null,
+      backupToken: crypto.randomBytes(32).toString('hex'),
+    },
   });
 
-  return { alreadySubscribed: false, subscriber };
+  return verifiedSubscriber;
+};
+
+const getOrCreateBackupToken = async (email: string) => {
+  const normalizedEmail = email.trim().toLowerCase();
+  const subscriber = await prisma.subscriber.findUnique({ where: { email: normalizedEmail } });
+
+  if (!subscriber) {
+    throw new ApiError(404, 'Subscriber not found');
+  }
+
+  if (!subscriber.isVerified) {
+    throw new ApiError(403, 'Email must be verified before backup can be enabled');
+  }
+
+  if (subscriber.backupToken) {
+    return subscriber;
+  }
+
+  return prisma.subscriber.update({
+    where: { email: normalizedEmail },
+    data: { backupToken: crypto.randomBytes(32).toString('hex') },
+  });
 };
 
 const getSubscribers = async (page: number = 1, limit: number = 20) => {
@@ -125,9 +207,10 @@ const unsubscribe = async (email: string) => {
 
 export const SubscriberService = {
   subscribe,
+  verifySubscriberEmail,
+  getOrCreateBackupToken,
   getSubscribers,
   updateSubscriber,
   deleteSubscriber,
   unsubscribe,
 };
-

@@ -25,6 +25,27 @@ router.post('/subscribe',
   }
 */
 subscriber_controller_1.SubscriberController.subscribe);
+// Public: Verify subscriber email with OTP
+router.post('/verify', 
+/*  #swagger.requestBody = {
+      required: true,
+      content: {
+          "application/json": {
+              schema: {
+                  type: "object",
+                  properties: {
+                      email: { type: "string", example: "user@example.com" },
+                      code: { type: "string", example: "123456" }
+                  },
+                  required: ["email", "code"]
+              }
+          }
+      }
+  }
+*/
+subscriber_controller_1.SubscriberController.verifySubscriberEmail);
+// Public: Get or create backup token for an already verified email
+router.post('/backup-token', subscriber_controller_1.SubscriberController.getBackupToken);
 // Public: Unsubscribe from mailing list
 router.get('/unsubscribe', subscriber_controller_1.SubscriberController.unsubscribe);
 // Admin: Get all subscribers with pagination

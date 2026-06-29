@@ -12,19 +12,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendThankYouEmail = void 0;
+exports.sendVerificationEmail = exports.sendThankYouEmail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const config_1 = __importDefault(require("../config"));
-const transporter = nodemailer_1.default.createTransport({
-    host: config_1.default.smtp_host,
-    port: config_1.default.smtp_port,
-    secure: config_1.default.smtp_port === 465,
-    auth: {
-        user: config_1.default.smtp_user,
-        pass: config_1.default.smtp_pass,
-    },
-});
+const ApiError_1 = __importDefault(require("../errors/ApiError"));
+const isSmtpConfigured = Boolean(config_1.default.smtp_host &&
+    config_1.default.smtp_user &&
+    config_1.default.smtp_pass &&
+    config_1.default.smtp_from_email);
+const getTransporter = () => {
+    if (!isSmtpConfigured) {
+        if (config_1.default.env === 'production') {
+            throw new ApiError_1.default(500, 'SMTP is not configured. Please set SMTP_HOST, SMTP_USER, SMTP_PASS, and SMTP_FROM_EMAIL.');
+        }
+        return null;
+    }
+    return nodemailer_1.default.createTransport({
+        host: config_1.default.smtp_host,
+        port: config_1.default.smtp_port,
+        secure: config_1.default.smtp_port === 465,
+        auth: {
+            user: config_1.default.smtp_user,
+            pass: config_1.default.smtp_pass,
+        },
+    });
+};
 const sendThankYouEmail = (toEmail) => __awaiter(void 0, void 0, void 0, function* () {
+    const transporter = getTransporter();
+    if (!transporter)
+        return;
     const unsubscribeLink = `${config_1.default.server_url}/api/v1/subscribers/unsubscribe?email=${encodeURIComponent(toEmail)}`;
     const mailOptions = {
         from: `"${config_1.default.smtp_from_name}" <${config_1.default.smtp_from_email}>`,
@@ -133,3 +149,45 @@ const sendThankYouEmail = (toEmail) => __awaiter(void 0, void 0, void 0, functio
     yield transporter.sendMail(mailOptions);
 });
 exports.sendThankYouEmail = sendThankYouEmail;
+const sendVerificationEmail = (toEmail, code) => __awaiter(void 0, void 0, void 0, function* () {
+    const transporter = getTransporter();
+    if (!transporter) {
+        console.log(`[DEV EMAIL] Blank Page verification code for ${toEmail}: ${code}`);
+        return { sent: false, devCode: code };
+    }
+    const mailOptions = {
+        from: `"${config_1.default.smtp_from_name}" <${config_1.default.smtp_from_email}>`,
+        to: toEmail,
+        subject: 'Your Blank Page verification code',
+        html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Verify your email</title>
+      </head>
+      <body style="margin:0;padding:0;background:#f8fafc;font-family:Arial,sans-serif;color:#1e293b;">
+        <div style="max-width:560px;margin:40px auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;">
+          <div style="padding:32px 28px 14px;text-align:center;border-bottom:1px solid #e2e8f0;">
+            <h1 style="margin:0;font-size:24px;color:#0f172a;">Verify your Blank Page email</h1>
+          </div>
+          <div style="padding:28px;text-align:center;line-height:1.6;font-size:15px;">
+            <p style="margin:0 0 18px;">Use this 6-digit code to finish setting up backup access.</p>
+            <div style="display:inline-block;letter-spacing:8px;font-size:30px;font-weight:700;color:#0f172a;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px;margin:6px 0 18px;">
+              ${code}
+            </div>
+            <p style="margin:0;color:#64748b;font-size:13px;">This code expires in 10 minutes. If you did not request this, you can ignore this email.</p>
+          </div>
+          <div style="padding:18px 28px;text-align:center;font-size:12px;color:#94a3b8;border-top:1px solid #e2e8f0;">
+            © ${new Date().getFullYear()} Blank Page
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+    };
+    yield transporter.sendMail(mailOptions);
+    return { sent: true };
+});
+exports.sendVerificationEmail = sendVerificationEmail;

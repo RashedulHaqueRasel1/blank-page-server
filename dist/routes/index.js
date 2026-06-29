@@ -10,6 +10,7 @@ const analytics_routes_1 = __importDefault(require("../modules/analytics/analyti
 const publish_routes_1 = __importDefault(require("../modules/publish/publish.routes"));
 const subscriber_routes_1 = __importDefault(require("../modules/subscriber/subscriber.routes"));
 const recent_visitors_routes_1 = __importDefault(require("../modules/recent-visitors/recent-visitors.routes"));
+const backup_routes_1 = __importDefault(require("../modules/backup/backup.routes"));
 const router = express_1.default.Router();
 router.use('/auth', auth_routes_1.default);
 router.use('/users', user_routes_1.default);
@@ -17,4 +18,5 @@ router.use('/analytics', analytics_routes_1.default);
 router.use('/pages', publish_routes_1.default);
 router.use('/subscribers', subscriber_routes_1.default);
 router.use('/visitors', recent_visitors_routes_1.default);
+router.use('/backups', backup_routes_1.default);
 exports.default = router;
