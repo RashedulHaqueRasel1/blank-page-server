@@ -4,6 +4,7 @@ import prisma from './lib/prisma';
 import http from 'http';
 import { initSocket } from './socket';
 import generateOpenAPI from './openapi';
+import { verifySmtpConnection } from './utils/mailer';
 
 async function main() {
   try {
@@ -12,6 +13,10 @@ async function main() {
 
     await prisma.$connect();
     console.log('🗄️  Database connected successfully');
+
+    verifySmtpConnection()
+      .then(() => console.log('📧 SMTP connection verified'))
+      .catch((error) => console.warn('📧 SMTP connection could not be verified:', error?.message || error));
     
     const server = http.createServer(app);
     initSocket(server);

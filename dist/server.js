@@ -18,6 +18,7 @@ const prisma_1 = __importDefault(require("./lib/prisma"));
 const http_1 = __importDefault(require("http"));
 const socket_1 = require("./socket");
 const openapi_1 = __importDefault(require("./openapi"));
+const mailer_1 = require("./utils/mailer");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -25,6 +26,9 @@ function main() {
             yield (0, openapi_1.default)();
             yield prisma_1.default.$connect();
             console.log('🗄️  Database connected successfully');
+            (0, mailer_1.verifySmtpConnection)()
+                .then(() => console.log('📧 SMTP connection verified'))
+                .catch((error) => console.warn('📧 SMTP connection could not be verified:', (error === null || error === void 0 ? void 0 : error.message) || error));
             const server = http_1.default.createServer(app_1.default);
             (0, socket_1.initSocket)(server);
             server.listen(config_1.default.port, () => {

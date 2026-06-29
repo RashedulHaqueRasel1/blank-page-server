@@ -136,6 +136,17 @@ npm install
 DATABASE_URL="mongodb+srv://<user>:<password>@cluster.mongodb.net/blank-page"
 PORT=5000
 JWT_SECRET=your_jwt_secret_here
+SERVER_URL=http://localhost:5000
+
+# OTP email delivery
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_REQUIRE_TLS=true
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+SMTP_FROM_NAME=Blank Page
+SMTP_FROM_EMAIL=your-email@gmail.com
 ```
 
 ### 3. Sync Database Schema

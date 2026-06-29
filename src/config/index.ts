@@ -11,6 +11,8 @@ export default {
   ip_geolocation_api_url: process.env.IP_GEOLOCATION_API_URL,
   smtp_host: process.env.SMTP_HOST,
   smtp_port: Number(process.env.SMTP_PORT) || 587,
+  smtp_secure: process.env.SMTP_SECURE === 'true',
+  smtp_require_tls: process.env.SMTP_REQUIRE_TLS !== 'false',
   smtp_user: process.env.SMTP_USER,
   smtp_pass: process.env.SMTP_PASS,
   smtp_from_name: process.env.SMTP_FROM_NAME || 'Blank Page',

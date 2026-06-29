@@ -12,25 +12,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendVerificationEmail = exports.sendThankYouEmail = void 0;
+exports.sendVerificationEmail = exports.verifySmtpConnection = exports.sendThankYouEmail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const config_1 = __importDefault(require("../config"));
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const isSmtpConfigured = Boolean(config_1.default.smtp_host &&
+    config_1.default.smtp_port &&
     config_1.default.smtp_user &&
     config_1.default.smtp_pass &&
+    config_1.default.smtp_from_name &&
     config_1.default.smtp_from_email);
 const getTransporter = () => {
     if (!isSmtpConfigured) {
         if (config_1.default.env === 'production') {
-            throw new ApiError_1.default(500, 'SMTP is not configured. Please set SMTP_HOST, SMTP_USER, SMTP_PASS, and SMTP_FROM_EMAIL.');
+            throw new ApiError_1.default(500, 'SMTP is not configured. Please set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM_NAME, and SMTP_FROM_EMAIL.');
         }
         return null;
     }
     return nodemailer_1.default.createTransport({
         host: config_1.default.smtp_host,
         port: config_1.default.smtp_port,
-        secure: config_1.default.smtp_port === 465,
+        secure: config_1.default.smtp_secure || config_1.default.smtp_port === 465,
+        requireTLS: config_1.default.smtp_require_tls,
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000,
         auth: {
             user: config_1.default.smtp_user,
             pass: config_1.default.smtp_pass,
@@ -149,6 +155,13 @@ const sendThankYouEmail = (toEmail) => __awaiter(void 0, void 0, void 0, functio
     yield transporter.sendMail(mailOptions);
 });
 exports.sendThankYouEmail = sendThankYouEmail;
+const verifySmtpConnection = () => __awaiter(void 0, void 0, void 0, function* () {
+    const transporter = getTransporter();
+    if (!transporter)
+        return;
+    yield transporter.verify();
+});
+exports.verifySmtpConnection = verifySmtpConnection;
 const sendVerificationEmail = (toEmail, code) => __awaiter(void 0, void 0, void 0, function* () {
     const transporter = getTransporter();
     if (!transporter) {
@@ -187,7 +200,13 @@ const sendVerificationEmail = (toEmail, code) => __awaiter(void 0, void 0, void 
       </html>
     `,
     };
-    yield transporter.sendMail(mailOptions);
+    try {
+        yield transporter.sendMail(mailOptions);
+    }
+    catch (error) {
+        console.error('Failed to send verification email:', error);
+        throw new ApiError_1.default(500, 'Could not send verification email. Please check SMTP settings.');
+    }
     return { sent: true };
 });
 exports.sendVerificationEmail = sendVerificationEmail;

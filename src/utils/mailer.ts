@@ -4,15 +4,17 @@ import ApiError from '../errors/ApiError';
 
 const isSmtpConfigured = Boolean(
   config.smtp_host &&
+  config.smtp_port &&
   config.smtp_user &&
   config.smtp_pass &&
+  config.smtp_from_name &&
   config.smtp_from_email
 );
 
 const getTransporter = () => {
   if (!isSmtpConfigured) {
     if (config.env === 'production') {
-      throw new ApiError(500, 'SMTP is not configured. Please set SMTP_HOST, SMTP_USER, SMTP_PASS, and SMTP_FROM_EMAIL.');
+      throw new ApiError(500, 'SMTP is not configured. Please set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM_NAME, and SMTP_FROM_EMAIL.');
     }
     return null;
   }
@@ -20,7 +22,11 @@ const getTransporter = () => {
   return nodemailer.createTransport({
     host: config.smtp_host,
     port: config.smtp_port,
-    secure: config.smtp_port === 465,
+    secure: config.smtp_secure || config.smtp_port === 465,
+    requireTLS: config.smtp_require_tls,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
     auth: {
       user: config.smtp_user,
       pass: config.smtp_pass,
@@ -142,6 +148,12 @@ export const sendThankYouEmail = async (toEmail: string): Promise<void> => {
   await transporter.sendMail(mailOptions);
 };
 
+export const verifySmtpConnection = async (): Promise<void> => {
+  const transporter = getTransporter();
+  if (!transporter) return;
+  await transporter.verify();
+};
+
 export const sendVerificationEmail = async (toEmail: string, code: string): Promise<{ sent: boolean; devCode?: string }> => {
   const transporter = getTransporter();
   if (!transporter) {
@@ -182,6 +194,12 @@ export const sendVerificationEmail = async (toEmail: string, code: string): Prom
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error('Failed to send verification email:', error);
+    throw new ApiError(500, 'Could not send verification email. Please check SMTP settings.');
+  }
+
   return { sent: true };
 };
