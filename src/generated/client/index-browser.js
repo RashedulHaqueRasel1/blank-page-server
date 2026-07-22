@@ -196,6 +196,26 @@ exports.Prisma.UserBackupScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TypingTestSessionScalarFieldEnum = {
+  id: 'id',
+  ownerId: 'ownerId',
+  accountUserId: 'accountUserId',
+  authorId: 'authorId',
+  language: 'language',
+  duration: 'duration',
+  mode: 'mode',
+  wordTarget: 'wordTarget',
+  targetText: 'targetText',
+  targetWordCount: 'targetWordCount',
+  source: 'source',
+  typedText: 'typedText',
+  elapsedSeconds: 'elapsedSeconds',
+  result: 'result',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -212,7 +232,8 @@ exports.Prisma.ModelName = {
   Visitor: 'Visitor',
   PublishedPage: 'PublishedPage',
   Subscriber: 'Subscriber',
-  UserBackup: 'UserBackup'
+  UserBackup: 'UserBackup',
+  TypingTestSession: 'TypingTestSession'
 };
 
 /**
