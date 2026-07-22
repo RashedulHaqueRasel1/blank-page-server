@@ -6,6 +6,7 @@ import PublishRoutes from '../modules/publish/publish.routes';
 import SubscriberRoutes from '../modules/subscriber/subscriber.routes';
 import RecentVisitorsRoutes from '../modules/recent-visitors/recent-visitors.routes';
 import BackupRoutes from '../modules/backup/backup.routes';
+import TypingTestRoutes from '../modules/typing-test/typing-test.routes';
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use('/pages', PublishRoutes);
 router.use('/subscribers', SubscriberRoutes);
 router.use('/visitors', RecentVisitorsRoutes);
 router.use('/backups', BackupRoutes);
+router.use('/typing-tests', TypingTestRoutes);
 
 export default router;
