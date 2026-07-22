@@ -1,7 +1,13 @@
 {
   "name": "blank-page-server",
   "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
   "main": "index.js",
+  "engines": {
+    "node": ">=20.20.0",
+    "pnpm": "10.x"
+  },
   "scripts": {
     "test": "echo \"No tests configured yet\"",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
