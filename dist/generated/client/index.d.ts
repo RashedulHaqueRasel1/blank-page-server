@@ -38,6 +38,11 @@ export type Subscriber = $Result.DefaultSelection<Prisma.$SubscriberPayload>
  * 
  */
 export type UserBackup = $Result.DefaultSelection<Prisma.$UserBackupPayload>
+/**
+ * Model TypingTestSession
+ * 
+ */
+export type TypingTestSession = $Result.DefaultSelection<Prisma.$TypingTestSessionPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -173,6 +178,16 @@ export class PrismaClient<
     * ```
     */
   get userBackup(): Prisma.UserBackupDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.typingTestSession`: Exposes CRUD operations for the **TypingTestSession** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TypingTestSessions
+    * const typingTestSessions = await prisma.typingTestSession.findMany()
+    * ```
+    */
+  get typingTestSession(): Prisma.TypingTestSessionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -618,7 +633,8 @@ export namespace Prisma {
     Visitor: 'Visitor',
     PublishedPage: 'PublishedPage',
     Subscriber: 'Subscriber',
-    UserBackup: 'UserBackup'
+    UserBackup: 'UserBackup',
+    TypingTestSession: 'TypingTestSession'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -637,7 +653,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "visitor" | "publishedPage" | "subscriber" | "userBackup"
+      modelProps: "user" | "visitor" | "publishedPage" | "subscriber" | "userBackup" | "typingTestSession"
       txIsolationLevel: never
     }
     model: {
@@ -1011,6 +1027,80 @@ export namespace Prisma {
           }
         }
       }
+      TypingTestSession: {
+        payload: Prisma.$TypingTestSessionPayload<ExtArgs>
+        fields: Prisma.TypingTestSessionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TypingTestSessionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TypingTestSessionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload>
+          }
+          findFirst: {
+            args: Prisma.TypingTestSessionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TypingTestSessionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload>
+          }
+          findMany: {
+            args: Prisma.TypingTestSessionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload>[]
+          }
+          create: {
+            args: Prisma.TypingTestSessionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload>
+          }
+          createMany: {
+            args: Prisma.TypingTestSessionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.TypingTestSessionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload>
+          }
+          update: {
+            args: Prisma.TypingTestSessionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload>
+          }
+          deleteMany: {
+            args: Prisma.TypingTestSessionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TypingTestSessionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.TypingTestSessionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TypingTestSessionPayload>
+          }
+          aggregate: {
+            args: Prisma.TypingTestSessionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTypingTestSession>
+          }
+          groupBy: {
+            args: Prisma.TypingTestSessionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TypingTestSessionGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.TypingTestSessionFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.TypingTestSessionAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.TypingTestSessionCountArgs<ExtArgs>
+            result: $Utils.Optional<TypingTestSessionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1095,6 +1185,7 @@ export namespace Prisma {
     publishedPage?: PublishedPageOmit
     subscriber?: SubscriberOmit
     userBackup?: UserBackupOmit
+    typingTestSession?: TypingTestSessionOmit
   }
 
   /* Types for Logging */
@@ -6384,6 +6475,1112 @@ export namespace Prisma {
 
 
   /**
+   * Model TypingTestSession
+   */
+
+  export type AggregateTypingTestSession = {
+    _count: TypingTestSessionCountAggregateOutputType | null
+    _avg: TypingTestSessionAvgAggregateOutputType | null
+    _sum: TypingTestSessionSumAggregateOutputType | null
+    _min: TypingTestSessionMinAggregateOutputType | null
+    _max: TypingTestSessionMaxAggregateOutputType | null
+  }
+
+  export type TypingTestSessionAvgAggregateOutputType = {
+    duration: number | null
+    wordTarget: number | null
+    targetWordCount: number | null
+    elapsedSeconds: number | null
+  }
+
+  export type TypingTestSessionSumAggregateOutputType = {
+    duration: number | null
+    wordTarget: number | null
+    targetWordCount: number | null
+    elapsedSeconds: number | null
+  }
+
+  export type TypingTestSessionMinAggregateOutputType = {
+    id: string | null
+    ownerId: string | null
+    accountUserId: string | null
+    authorId: string | null
+    language: string | null
+    duration: number | null
+    mode: string | null
+    wordTarget: number | null
+    targetText: string | null
+    targetWordCount: number | null
+    source: string | null
+    typedText: string | null
+    elapsedSeconds: number | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TypingTestSessionMaxAggregateOutputType = {
+    id: string | null
+    ownerId: string | null
+    accountUserId: string | null
+    authorId: string | null
+    language: string | null
+    duration: number | null
+    mode: string | null
+    wordTarget: number | null
+    targetText: string | null
+    targetWordCount: number | null
+    source: string | null
+    typedText: string | null
+    elapsedSeconds: number | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TypingTestSessionCountAggregateOutputType = {
+    id: number
+    ownerId: number
+    accountUserId: number
+    authorId: number
+    language: number
+    duration: number
+    mode: number
+    wordTarget: number
+    targetText: number
+    targetWordCount: number
+    source: number
+    typedText: number
+    elapsedSeconds: number
+    result: number
+    completedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TypingTestSessionAvgAggregateInputType = {
+    duration?: true
+    wordTarget?: true
+    targetWordCount?: true
+    elapsedSeconds?: true
+  }
+
+  export type TypingTestSessionSumAggregateInputType = {
+    duration?: true
+    wordTarget?: true
+    targetWordCount?: true
+    elapsedSeconds?: true
+  }
+
+  export type TypingTestSessionMinAggregateInputType = {
+    id?: true
+    ownerId?: true
+    accountUserId?: true
+    authorId?: true
+    language?: true
+    duration?: true
+    mode?: true
+    wordTarget?: true
+    targetText?: true
+    targetWordCount?: true
+    source?: true
+    typedText?: true
+    elapsedSeconds?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TypingTestSessionMaxAggregateInputType = {
+    id?: true
+    ownerId?: true
+    accountUserId?: true
+    authorId?: true
+    language?: true
+    duration?: true
+    mode?: true
+    wordTarget?: true
+    targetText?: true
+    targetWordCount?: true
+    source?: true
+    typedText?: true
+    elapsedSeconds?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TypingTestSessionCountAggregateInputType = {
+    id?: true
+    ownerId?: true
+    accountUserId?: true
+    authorId?: true
+    language?: true
+    duration?: true
+    mode?: true
+    wordTarget?: true
+    targetText?: true
+    targetWordCount?: true
+    source?: true
+    typedText?: true
+    elapsedSeconds?: true
+    result?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TypingTestSessionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TypingTestSession to aggregate.
+     */
+    where?: TypingTestSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TypingTestSessions to fetch.
+     */
+    orderBy?: TypingTestSessionOrderByWithRelationInput | TypingTestSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TypingTestSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TypingTestSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TypingTestSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TypingTestSessions
+    **/
+    _count?: true | TypingTestSessionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TypingTestSessionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TypingTestSessionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TypingTestSessionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TypingTestSessionMaxAggregateInputType
+  }
+
+  export type GetTypingTestSessionAggregateType<T extends TypingTestSessionAggregateArgs> = {
+        [P in keyof T & keyof AggregateTypingTestSession]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTypingTestSession[P]>
+      : GetScalarType<T[P], AggregateTypingTestSession[P]>
+  }
+
+
+
+
+  export type TypingTestSessionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TypingTestSessionWhereInput
+    orderBy?: TypingTestSessionOrderByWithAggregationInput | TypingTestSessionOrderByWithAggregationInput[]
+    by: TypingTestSessionScalarFieldEnum[] | TypingTestSessionScalarFieldEnum
+    having?: TypingTestSessionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TypingTestSessionCountAggregateInputType | true
+    _avg?: TypingTestSessionAvgAggregateInputType
+    _sum?: TypingTestSessionSumAggregateInputType
+    _min?: TypingTestSessionMinAggregateInputType
+    _max?: TypingTestSessionMaxAggregateInputType
+  }
+
+  export type TypingTestSessionGroupByOutputType = {
+    id: string
+    ownerId: string
+    accountUserId: string | null
+    authorId: string | null
+    language: string
+    duration: number
+    mode: string
+    wordTarget: number | null
+    targetText: string
+    targetWordCount: number
+    source: string
+    typedText: string | null
+    elapsedSeconds: number | null
+    result: JsonValue | null
+    completedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: TypingTestSessionCountAggregateOutputType | null
+    _avg: TypingTestSessionAvgAggregateOutputType | null
+    _sum: TypingTestSessionSumAggregateOutputType | null
+    _min: TypingTestSessionMinAggregateOutputType | null
+    _max: TypingTestSessionMaxAggregateOutputType | null
+  }
+
+  type GetTypingTestSessionGroupByPayload<T extends TypingTestSessionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TypingTestSessionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TypingTestSessionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TypingTestSessionGroupByOutputType[P]>
+            : GetScalarType<T[P], TypingTestSessionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TypingTestSessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ownerId?: boolean
+    accountUserId?: boolean
+    authorId?: boolean
+    language?: boolean
+    duration?: boolean
+    mode?: boolean
+    wordTarget?: boolean
+    targetText?: boolean
+    targetWordCount?: boolean
+    source?: boolean
+    typedText?: boolean
+    elapsedSeconds?: boolean
+    result?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["typingTestSession"]>
+
+
+
+  export type TypingTestSessionSelectScalar = {
+    id?: boolean
+    ownerId?: boolean
+    accountUserId?: boolean
+    authorId?: boolean
+    language?: boolean
+    duration?: boolean
+    mode?: boolean
+    wordTarget?: boolean
+    targetText?: boolean
+    targetWordCount?: boolean
+    source?: boolean
+    typedText?: boolean
+    elapsedSeconds?: boolean
+    result?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TypingTestSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ownerId" | "accountUserId" | "authorId" | "language" | "duration" | "mode" | "wordTarget" | "targetText" | "targetWordCount" | "source" | "typedText" | "elapsedSeconds" | "result" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["typingTestSession"]>
+
+  export type $TypingTestSessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TypingTestSession"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      ownerId: string
+      accountUserId: string | null
+      authorId: string | null
+      language: string
+      duration: number
+      mode: string
+      wordTarget: number | null
+      targetText: string
+      targetWordCount: number
+      source: string
+      typedText: string | null
+      elapsedSeconds: number | null
+      result: Prisma.JsonValue | null
+      completedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["typingTestSession"]>
+    composites: {}
+  }
+
+  type TypingTestSessionGetPayload<S extends boolean | null | undefined | TypingTestSessionDefaultArgs> = $Result.GetResult<Prisma.$TypingTestSessionPayload, S>
+
+  type TypingTestSessionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TypingTestSessionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TypingTestSessionCountAggregateInputType | true
+    }
+
+  export interface TypingTestSessionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TypingTestSession'], meta: { name: 'TypingTestSession' } }
+    /**
+     * Find zero or one TypingTestSession that matches the filter.
+     * @param {TypingTestSessionFindUniqueArgs} args - Arguments to find a TypingTestSession
+     * @example
+     * // Get one TypingTestSession
+     * const typingTestSession = await prisma.typingTestSession.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TypingTestSessionFindUniqueArgs>(args: SelectSubset<T, TypingTestSessionFindUniqueArgs<ExtArgs>>): Prisma__TypingTestSessionClient<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TypingTestSession that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TypingTestSessionFindUniqueOrThrowArgs} args - Arguments to find a TypingTestSession
+     * @example
+     * // Get one TypingTestSession
+     * const typingTestSession = await prisma.typingTestSession.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TypingTestSessionFindUniqueOrThrowArgs>(args: SelectSubset<T, TypingTestSessionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TypingTestSessionClient<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TypingTestSession that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TypingTestSessionFindFirstArgs} args - Arguments to find a TypingTestSession
+     * @example
+     * // Get one TypingTestSession
+     * const typingTestSession = await prisma.typingTestSession.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TypingTestSessionFindFirstArgs>(args?: SelectSubset<T, TypingTestSessionFindFirstArgs<ExtArgs>>): Prisma__TypingTestSessionClient<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TypingTestSession that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TypingTestSessionFindFirstOrThrowArgs} args - Arguments to find a TypingTestSession
+     * @example
+     * // Get one TypingTestSession
+     * const typingTestSession = await prisma.typingTestSession.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TypingTestSessionFindFirstOrThrowArgs>(args?: SelectSubset<T, TypingTestSessionFindFirstOrThrowArgs<ExtArgs>>): Prisma__TypingTestSessionClient<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TypingTestSessions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TypingTestSessionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TypingTestSessions
+     * const typingTestSessions = await prisma.typingTestSession.findMany()
+     * 
+     * // Get first 10 TypingTestSessions
+     * const typingTestSessions = await prisma.typingTestSession.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const typingTestSessionWithIdOnly = await prisma.typingTestSession.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TypingTestSessionFindManyArgs>(args?: SelectSubset<T, TypingTestSessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TypingTestSession.
+     * @param {TypingTestSessionCreateArgs} args - Arguments to create a TypingTestSession.
+     * @example
+     * // Create one TypingTestSession
+     * const TypingTestSession = await prisma.typingTestSession.create({
+     *   data: {
+     *     // ... data to create a TypingTestSession
+     *   }
+     * })
+     * 
+     */
+    create<T extends TypingTestSessionCreateArgs>(args: SelectSubset<T, TypingTestSessionCreateArgs<ExtArgs>>): Prisma__TypingTestSessionClient<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TypingTestSessions.
+     * @param {TypingTestSessionCreateManyArgs} args - Arguments to create many TypingTestSessions.
+     * @example
+     * // Create many TypingTestSessions
+     * const typingTestSession = await prisma.typingTestSession.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TypingTestSessionCreateManyArgs>(args?: SelectSubset<T, TypingTestSessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a TypingTestSession.
+     * @param {TypingTestSessionDeleteArgs} args - Arguments to delete one TypingTestSession.
+     * @example
+     * // Delete one TypingTestSession
+     * const TypingTestSession = await prisma.typingTestSession.delete({
+     *   where: {
+     *     // ... filter to delete one TypingTestSession
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TypingTestSessionDeleteArgs>(args: SelectSubset<T, TypingTestSessionDeleteArgs<ExtArgs>>): Prisma__TypingTestSessionClient<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TypingTestSession.
+     * @param {TypingTestSessionUpdateArgs} args - Arguments to update one TypingTestSession.
+     * @example
+     * // Update one TypingTestSession
+     * const typingTestSession = await prisma.typingTestSession.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TypingTestSessionUpdateArgs>(args: SelectSubset<T, TypingTestSessionUpdateArgs<ExtArgs>>): Prisma__TypingTestSessionClient<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TypingTestSessions.
+     * @param {TypingTestSessionDeleteManyArgs} args - Arguments to filter TypingTestSessions to delete.
+     * @example
+     * // Delete a few TypingTestSessions
+     * const { count } = await prisma.typingTestSession.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TypingTestSessionDeleteManyArgs>(args?: SelectSubset<T, TypingTestSessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TypingTestSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TypingTestSessionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TypingTestSessions
+     * const typingTestSession = await prisma.typingTestSession.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TypingTestSessionUpdateManyArgs>(args: SelectSubset<T, TypingTestSessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one TypingTestSession.
+     * @param {TypingTestSessionUpsertArgs} args - Arguments to update or create a TypingTestSession.
+     * @example
+     * // Update or create a TypingTestSession
+     * const typingTestSession = await prisma.typingTestSession.upsert({
+     *   create: {
+     *     // ... data to create a TypingTestSession
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TypingTestSession we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TypingTestSessionUpsertArgs>(args: SelectSubset<T, TypingTestSessionUpsertArgs<ExtArgs>>): Prisma__TypingTestSessionClient<$Result.GetResult<Prisma.$TypingTestSessionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TypingTestSessions that matches the filter.
+     * @param {TypingTestSessionFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const typingTestSession = await prisma.typingTestSession.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: TypingTestSessionFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a TypingTestSession.
+     * @param {TypingTestSessionAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const typingTestSession = await prisma.typingTestSession.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: TypingTestSessionAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of TypingTestSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TypingTestSessionCountArgs} args - Arguments to filter TypingTestSessions to count.
+     * @example
+     * // Count the number of TypingTestSessions
+     * const count = await prisma.typingTestSession.count({
+     *   where: {
+     *     // ... the filter for the TypingTestSessions we want to count
+     *   }
+     * })
+    **/
+    count<T extends TypingTestSessionCountArgs>(
+      args?: Subset<T, TypingTestSessionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TypingTestSessionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TypingTestSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TypingTestSessionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TypingTestSessionAggregateArgs>(args: Subset<T, TypingTestSessionAggregateArgs>): Prisma.PrismaPromise<GetTypingTestSessionAggregateType<T>>
+
+    /**
+     * Group by TypingTestSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TypingTestSessionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TypingTestSessionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TypingTestSessionGroupByArgs['orderBy'] }
+        : { orderBy?: TypingTestSessionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TypingTestSessionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTypingTestSessionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TypingTestSession model
+   */
+  readonly fields: TypingTestSessionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TypingTestSession.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TypingTestSessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TypingTestSession model
+   */
+  interface TypingTestSessionFieldRefs {
+    readonly id: FieldRef<"TypingTestSession", 'String'>
+    readonly ownerId: FieldRef<"TypingTestSession", 'String'>
+    readonly accountUserId: FieldRef<"TypingTestSession", 'String'>
+    readonly authorId: FieldRef<"TypingTestSession", 'String'>
+    readonly language: FieldRef<"TypingTestSession", 'String'>
+    readonly duration: FieldRef<"TypingTestSession", 'Int'>
+    readonly mode: FieldRef<"TypingTestSession", 'String'>
+    readonly wordTarget: FieldRef<"TypingTestSession", 'Int'>
+    readonly targetText: FieldRef<"TypingTestSession", 'String'>
+    readonly targetWordCount: FieldRef<"TypingTestSession", 'Int'>
+    readonly source: FieldRef<"TypingTestSession", 'String'>
+    readonly typedText: FieldRef<"TypingTestSession", 'String'>
+    readonly elapsedSeconds: FieldRef<"TypingTestSession", 'Int'>
+    readonly result: FieldRef<"TypingTestSession", 'Json'>
+    readonly completedAt: FieldRef<"TypingTestSession", 'DateTime'>
+    readonly createdAt: FieldRef<"TypingTestSession", 'DateTime'>
+    readonly updatedAt: FieldRef<"TypingTestSession", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TypingTestSession findUnique
+   */
+  export type TypingTestSessionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which TypingTestSession to fetch.
+     */
+    where: TypingTestSessionWhereUniqueInput
+  }
+
+  /**
+   * TypingTestSession findUniqueOrThrow
+   */
+  export type TypingTestSessionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which TypingTestSession to fetch.
+     */
+    where: TypingTestSessionWhereUniqueInput
+  }
+
+  /**
+   * TypingTestSession findFirst
+   */
+  export type TypingTestSessionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which TypingTestSession to fetch.
+     */
+    where?: TypingTestSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TypingTestSessions to fetch.
+     */
+    orderBy?: TypingTestSessionOrderByWithRelationInput | TypingTestSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TypingTestSessions.
+     */
+    cursor?: TypingTestSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TypingTestSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TypingTestSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TypingTestSessions.
+     */
+    distinct?: TypingTestSessionScalarFieldEnum | TypingTestSessionScalarFieldEnum[]
+  }
+
+  /**
+   * TypingTestSession findFirstOrThrow
+   */
+  export type TypingTestSessionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which TypingTestSession to fetch.
+     */
+    where?: TypingTestSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TypingTestSessions to fetch.
+     */
+    orderBy?: TypingTestSessionOrderByWithRelationInput | TypingTestSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TypingTestSessions.
+     */
+    cursor?: TypingTestSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TypingTestSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TypingTestSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TypingTestSessions.
+     */
+    distinct?: TypingTestSessionScalarFieldEnum | TypingTestSessionScalarFieldEnum[]
+  }
+
+  /**
+   * TypingTestSession findMany
+   */
+  export type TypingTestSessionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which TypingTestSessions to fetch.
+     */
+    where?: TypingTestSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TypingTestSessions to fetch.
+     */
+    orderBy?: TypingTestSessionOrderByWithRelationInput | TypingTestSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TypingTestSessions.
+     */
+    cursor?: TypingTestSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TypingTestSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TypingTestSessions.
+     */
+    skip?: number
+    distinct?: TypingTestSessionScalarFieldEnum | TypingTestSessionScalarFieldEnum[]
+  }
+
+  /**
+   * TypingTestSession create
+   */
+  export type TypingTestSessionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * The data needed to create a TypingTestSession.
+     */
+    data: XOR<TypingTestSessionCreateInput, TypingTestSessionUncheckedCreateInput>
+  }
+
+  /**
+   * TypingTestSession createMany
+   */
+  export type TypingTestSessionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TypingTestSessions.
+     */
+    data: TypingTestSessionCreateManyInput | TypingTestSessionCreateManyInput[]
+  }
+
+  /**
+   * TypingTestSession update
+   */
+  export type TypingTestSessionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * The data needed to update a TypingTestSession.
+     */
+    data: XOR<TypingTestSessionUpdateInput, TypingTestSessionUncheckedUpdateInput>
+    /**
+     * Choose, which TypingTestSession to update.
+     */
+    where: TypingTestSessionWhereUniqueInput
+  }
+
+  /**
+   * TypingTestSession updateMany
+   */
+  export type TypingTestSessionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TypingTestSessions.
+     */
+    data: XOR<TypingTestSessionUpdateManyMutationInput, TypingTestSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which TypingTestSessions to update
+     */
+    where?: TypingTestSessionWhereInput
+    /**
+     * Limit how many TypingTestSessions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TypingTestSession upsert
+   */
+  export type TypingTestSessionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * The filter to search for the TypingTestSession to update in case it exists.
+     */
+    where: TypingTestSessionWhereUniqueInput
+    /**
+     * In case the TypingTestSession found by the `where` argument doesn't exist, create a new TypingTestSession with this data.
+     */
+    create: XOR<TypingTestSessionCreateInput, TypingTestSessionUncheckedCreateInput>
+    /**
+     * In case the TypingTestSession was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TypingTestSessionUpdateInput, TypingTestSessionUncheckedUpdateInput>
+  }
+
+  /**
+   * TypingTestSession delete
+   */
+  export type TypingTestSessionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+    /**
+     * Filter which TypingTestSession to delete.
+     */
+    where: TypingTestSessionWhereUniqueInput
+  }
+
+  /**
+   * TypingTestSession deleteMany
+   */
+  export type TypingTestSessionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TypingTestSessions to delete
+     */
+    where?: TypingTestSessionWhereInput
+    /**
+     * Limit how many TypingTestSessions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TypingTestSession findRaw
+   */
+  export type TypingTestSessionFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * TypingTestSession aggregateRaw
+   */
+  export type TypingTestSessionAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * TypingTestSession without action
+   */
+  export type TypingTestSessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TypingTestSession
+     */
+    select?: TypingTestSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TypingTestSession
+     */
+    omit?: TypingTestSessionOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -6482,6 +7679,29 @@ export namespace Prisma {
   };
 
   export type UserBackupScalarFieldEnum = (typeof UserBackupScalarFieldEnum)[keyof typeof UserBackupScalarFieldEnum]
+
+
+  export const TypingTestSessionScalarFieldEnum: {
+    id: 'id',
+    ownerId: 'ownerId',
+    accountUserId: 'accountUserId',
+    authorId: 'authorId',
+    language: 'language',
+    duration: 'duration',
+    mode: 'mode',
+    wordTarget: 'wordTarget',
+    targetText: 'targetText',
+    targetWordCount: 'targetWordCount',
+    source: 'source',
+    typedText: 'typedText',
+    elapsedSeconds: 'elapsedSeconds',
+    result: 'result',
+    completedAt: 'completedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TypingTestSessionScalarFieldEnum = (typeof TypingTestSessionScalarFieldEnum)[keyof typeof TypingTestSessionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -7055,6 +8275,120 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"UserBackup"> | Date | string
   }
 
+  export type TypingTestSessionWhereInput = {
+    AND?: TypingTestSessionWhereInput | TypingTestSessionWhereInput[]
+    OR?: TypingTestSessionWhereInput[]
+    NOT?: TypingTestSessionWhereInput | TypingTestSessionWhereInput[]
+    id?: StringFilter<"TypingTestSession"> | string
+    ownerId?: StringFilter<"TypingTestSession"> | string
+    accountUserId?: StringNullableFilter<"TypingTestSession"> | string | null
+    authorId?: StringNullableFilter<"TypingTestSession"> | string | null
+    language?: StringFilter<"TypingTestSession"> | string
+    duration?: IntFilter<"TypingTestSession"> | number
+    mode?: StringFilter<"TypingTestSession"> | string
+    wordTarget?: IntNullableFilter<"TypingTestSession"> | number | null
+    targetText?: StringFilter<"TypingTestSession"> | string
+    targetWordCount?: IntFilter<"TypingTestSession"> | number
+    source?: StringFilter<"TypingTestSession"> | string
+    typedText?: StringNullableFilter<"TypingTestSession"> | string | null
+    elapsedSeconds?: IntNullableFilter<"TypingTestSession"> | number | null
+    result?: JsonNullableFilter<"TypingTestSession">
+    completedAt?: DateTimeNullableFilter<"TypingTestSession"> | Date | string | null
+    createdAt?: DateTimeFilter<"TypingTestSession"> | Date | string
+    updatedAt?: DateTimeFilter<"TypingTestSession"> | Date | string
+  }
+
+  export type TypingTestSessionOrderByWithRelationInput = {
+    id?: SortOrder
+    ownerId?: SortOrder
+    accountUserId?: SortOrder
+    authorId?: SortOrder
+    language?: SortOrder
+    duration?: SortOrder
+    mode?: SortOrder
+    wordTarget?: SortOrder
+    targetText?: SortOrder
+    targetWordCount?: SortOrder
+    source?: SortOrder
+    typedText?: SortOrder
+    elapsedSeconds?: SortOrder
+    result?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TypingTestSessionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TypingTestSessionWhereInput | TypingTestSessionWhereInput[]
+    OR?: TypingTestSessionWhereInput[]
+    NOT?: TypingTestSessionWhereInput | TypingTestSessionWhereInput[]
+    ownerId?: StringFilter<"TypingTestSession"> | string
+    accountUserId?: StringNullableFilter<"TypingTestSession"> | string | null
+    authorId?: StringNullableFilter<"TypingTestSession"> | string | null
+    language?: StringFilter<"TypingTestSession"> | string
+    duration?: IntFilter<"TypingTestSession"> | number
+    mode?: StringFilter<"TypingTestSession"> | string
+    wordTarget?: IntNullableFilter<"TypingTestSession"> | number | null
+    targetText?: StringFilter<"TypingTestSession"> | string
+    targetWordCount?: IntFilter<"TypingTestSession"> | number
+    source?: StringFilter<"TypingTestSession"> | string
+    typedText?: StringNullableFilter<"TypingTestSession"> | string | null
+    elapsedSeconds?: IntNullableFilter<"TypingTestSession"> | number | null
+    result?: JsonNullableFilter<"TypingTestSession">
+    completedAt?: DateTimeNullableFilter<"TypingTestSession"> | Date | string | null
+    createdAt?: DateTimeFilter<"TypingTestSession"> | Date | string
+    updatedAt?: DateTimeFilter<"TypingTestSession"> | Date | string
+  }, "id">
+
+  export type TypingTestSessionOrderByWithAggregationInput = {
+    id?: SortOrder
+    ownerId?: SortOrder
+    accountUserId?: SortOrder
+    authorId?: SortOrder
+    language?: SortOrder
+    duration?: SortOrder
+    mode?: SortOrder
+    wordTarget?: SortOrder
+    targetText?: SortOrder
+    targetWordCount?: SortOrder
+    source?: SortOrder
+    typedText?: SortOrder
+    elapsedSeconds?: SortOrder
+    result?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TypingTestSessionCountOrderByAggregateInput
+    _avg?: TypingTestSessionAvgOrderByAggregateInput
+    _max?: TypingTestSessionMaxOrderByAggregateInput
+    _min?: TypingTestSessionMinOrderByAggregateInput
+    _sum?: TypingTestSessionSumOrderByAggregateInput
+  }
+
+  export type TypingTestSessionScalarWhereWithAggregatesInput = {
+    AND?: TypingTestSessionScalarWhereWithAggregatesInput | TypingTestSessionScalarWhereWithAggregatesInput[]
+    OR?: TypingTestSessionScalarWhereWithAggregatesInput[]
+    NOT?: TypingTestSessionScalarWhereWithAggregatesInput | TypingTestSessionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TypingTestSession"> | string
+    ownerId?: StringWithAggregatesFilter<"TypingTestSession"> | string
+    accountUserId?: StringNullableWithAggregatesFilter<"TypingTestSession"> | string | null
+    authorId?: StringNullableWithAggregatesFilter<"TypingTestSession"> | string | null
+    language?: StringWithAggregatesFilter<"TypingTestSession"> | string
+    duration?: IntWithAggregatesFilter<"TypingTestSession"> | number
+    mode?: StringWithAggregatesFilter<"TypingTestSession"> | string
+    wordTarget?: IntNullableWithAggregatesFilter<"TypingTestSession"> | number | null
+    targetText?: StringWithAggregatesFilter<"TypingTestSession"> | string
+    targetWordCount?: IntWithAggregatesFilter<"TypingTestSession"> | number
+    source?: StringWithAggregatesFilter<"TypingTestSession"> | string
+    typedText?: StringNullableWithAggregatesFilter<"TypingTestSession"> | string | null
+    elapsedSeconds?: IntNullableWithAggregatesFilter<"TypingTestSession"> | number | null
+    result?: JsonNullableWithAggregatesFilter<"TypingTestSession">
+    completedAt?: DateTimeNullableWithAggregatesFilter<"TypingTestSession"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TypingTestSession"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TypingTestSession"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -7609,6 +8943,142 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TypingTestSessionCreateInput = {
+    id?: string
+    ownerId: string
+    accountUserId?: string | null
+    authorId?: string | null
+    language: string
+    duration: number
+    mode?: string
+    wordTarget?: number | null
+    targetText: string
+    targetWordCount: number
+    source?: string
+    typedText?: string | null
+    elapsedSeconds?: number | null
+    result?: InputJsonValue | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TypingTestSessionUncheckedCreateInput = {
+    id?: string
+    ownerId: string
+    accountUserId?: string | null
+    authorId?: string | null
+    language: string
+    duration: number
+    mode?: string
+    wordTarget?: number | null
+    targetText: string
+    targetWordCount: number
+    source?: string
+    typedText?: string | null
+    elapsedSeconds?: number | null
+    result?: InputJsonValue | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TypingTestSessionUpdateInput = {
+    ownerId?: StringFieldUpdateOperationsInput | string
+    accountUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    mode?: StringFieldUpdateOperationsInput | string
+    wordTarget?: NullableIntFieldUpdateOperationsInput | number | null
+    targetText?: StringFieldUpdateOperationsInput | string
+    targetWordCount?: IntFieldUpdateOperationsInput | number
+    source?: StringFieldUpdateOperationsInput | string
+    typedText?: NullableStringFieldUpdateOperationsInput | string | null
+    elapsedSeconds?: NullableIntFieldUpdateOperationsInput | number | null
+    result?: InputJsonValue | InputJsonValue | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TypingTestSessionUncheckedUpdateInput = {
+    ownerId?: StringFieldUpdateOperationsInput | string
+    accountUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    mode?: StringFieldUpdateOperationsInput | string
+    wordTarget?: NullableIntFieldUpdateOperationsInput | number | null
+    targetText?: StringFieldUpdateOperationsInput | string
+    targetWordCount?: IntFieldUpdateOperationsInput | number
+    source?: StringFieldUpdateOperationsInput | string
+    typedText?: NullableStringFieldUpdateOperationsInput | string | null
+    elapsedSeconds?: NullableIntFieldUpdateOperationsInput | number | null
+    result?: InputJsonValue | InputJsonValue | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TypingTestSessionCreateManyInput = {
+    id?: string
+    ownerId: string
+    accountUserId?: string | null
+    authorId?: string | null
+    language: string
+    duration: number
+    mode?: string
+    wordTarget?: number | null
+    targetText: string
+    targetWordCount: number
+    source?: string
+    typedText?: string | null
+    elapsedSeconds?: number | null
+    result?: InputJsonValue | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TypingTestSessionUpdateManyMutationInput = {
+    ownerId?: StringFieldUpdateOperationsInput | string
+    accountUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    mode?: StringFieldUpdateOperationsInput | string
+    wordTarget?: NullableIntFieldUpdateOperationsInput | number | null
+    targetText?: StringFieldUpdateOperationsInput | string
+    targetWordCount?: IntFieldUpdateOperationsInput | number
+    source?: StringFieldUpdateOperationsInput | string
+    typedText?: NullableStringFieldUpdateOperationsInput | string | null
+    elapsedSeconds?: NullableIntFieldUpdateOperationsInput | number | null
+    result?: InputJsonValue | InputJsonValue | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TypingTestSessionUncheckedUpdateManyInput = {
+    ownerId?: StringFieldUpdateOperationsInput | string
+    accountUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    mode?: StringFieldUpdateOperationsInput | string
+    wordTarget?: NullableIntFieldUpdateOperationsInput | number | null
+    targetText?: StringFieldUpdateOperationsInput | string
+    targetWordCount?: IntFieldUpdateOperationsInput | number
+    source?: StringFieldUpdateOperationsInput | string
+    typedText?: NullableStringFieldUpdateOperationsInput | string | null
+    elapsedSeconds?: NullableIntFieldUpdateOperationsInput | number | null
+    result?: InputJsonValue | InputJsonValue | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -8061,6 +9531,134 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    isSet?: boolean
+  }
+
+  export type TypingTestSessionCountOrderByAggregateInput = {
+    id?: SortOrder
+    ownerId?: SortOrder
+    accountUserId?: SortOrder
+    authorId?: SortOrder
+    language?: SortOrder
+    duration?: SortOrder
+    mode?: SortOrder
+    wordTarget?: SortOrder
+    targetText?: SortOrder
+    targetWordCount?: SortOrder
+    source?: SortOrder
+    typedText?: SortOrder
+    elapsedSeconds?: SortOrder
+    result?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TypingTestSessionAvgOrderByAggregateInput = {
+    duration?: SortOrder
+    wordTarget?: SortOrder
+    targetWordCount?: SortOrder
+    elapsedSeconds?: SortOrder
+  }
+
+  export type TypingTestSessionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    ownerId?: SortOrder
+    accountUserId?: SortOrder
+    authorId?: SortOrder
+    language?: SortOrder
+    duration?: SortOrder
+    mode?: SortOrder
+    wordTarget?: SortOrder
+    targetText?: SortOrder
+    targetWordCount?: SortOrder
+    source?: SortOrder
+    typedText?: SortOrder
+    elapsedSeconds?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TypingTestSessionMinOrderByAggregateInput = {
+    id?: SortOrder
+    ownerId?: SortOrder
+    accountUserId?: SortOrder
+    authorId?: SortOrder
+    language?: SortOrder
+    duration?: SortOrder
+    mode?: SortOrder
+    wordTarget?: SortOrder
+    targetText?: SortOrder
+    targetWordCount?: SortOrder
+    source?: SortOrder
+    typedText?: SortOrder
+    elapsedSeconds?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TypingTestSessionSumOrderByAggregateInput = {
+    duration?: SortOrder
+    wordTarget?: SortOrder
+    targetWordCount?: SortOrder
+    elapsedSeconds?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -8089,6 +9687,15 @@ export namespace Prisma {
 
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+    unset?: boolean
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -8279,6 +9886,47 @@ export namespace Prisma {
   export type NestedJsonFilterBase<$PrismaModel = never> = {
     equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    isSet?: boolean
   }
 
 
