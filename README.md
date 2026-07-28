@@ -26,7 +26,6 @@
 - 🛡️ **Single-Use OTP Security**: 6-digit OTP verification codes with 5-minute strict expiration windows and automated single-use burning.
 - 💾 **Cloud Backup & Sync**: Encrypted email-verified backup access allowing users to back up and restore local IndexedDB notes.
 - 🤖 **AI Content Generation**: Dynamic typing test paragraph generation across multiple languages via OpenRouter AI.
-- 📊 **Visitor & Analytics Tracking**: Automated IP geolocation, device identification, and view/edit log auditing.
 
 ---
 
