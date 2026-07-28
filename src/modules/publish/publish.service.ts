@@ -1,6 +1,7 @@
 import prisma from '../../lib/prisma';
 import ApiError from '../../errors/ApiError';
 import { PublishedPage } from '../../generated/client';
+import { updateSocketPageSession, clearSocketPageSession } from '../../socket';
 
 type PublishPageData = {
   customUrl: string;
@@ -77,6 +78,8 @@ const publishPage = async (data: PublishPageData): Promise<PublishedPage> => {
       isDeleted: false,
     },
   });
+
+  updateSocketPageSession(newPage.customUrl, newPage.content);
 
   return newPage;
 };
@@ -194,6 +197,8 @@ const updatePageContent = async (
     },
   });
 
+  updateSocketPageSession(updatedPage.customUrl, updatedPage.content);
+
   return updatedPage;
 };
 
@@ -212,6 +217,8 @@ const softDeletePage = async (customUrl: string): Promise<PublishedPage> => {
     where: { id: page.id },
     data: { isDeleted: true },
   });
+
+  clearSocketPageSession(updatedPage.customUrl);
 
   return updatedPage;
 };
@@ -296,6 +303,8 @@ const updatePageByAuthor = async (
       authorEditsLog: [...currentAuthorEditsLog, stateChange],
     },
   });
+
+  updateSocketPageSession(updatedPage.customUrl, updatedPage.content);
 
   return updatedPage;
 };

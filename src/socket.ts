@@ -23,6 +23,35 @@ type PageSession = {
 };
 
 const pageSessions = new Map<string, PageSession>();
+let ioInstance: SocketIOServer | null = null;
+
+export const updateSocketPageSession = (customUrl: string, content: string) => {
+  const normalizedUrl = customUrl.trim().toLowerCase();
+  const session = pageSessions.get(normalizedUrl);
+  if (session) {
+    if (session.saveTimer) clearTimeout(session.saveTimer);
+    session.content = content;
+    session.version += 1;
+    session.history = [];
+  } else {
+    pageSessions.set(normalizedUrl, {
+      content,
+      version: 1,
+      history: [],
+    });
+  }
+
+  if (ioInstance) {
+    ioInstance.to(normalizedUrl).emit('page-updated', content);
+  }
+};
+
+export const clearSocketPageSession = (customUrl: string) => {
+  const normalizedUrl = customUrl.trim().toLowerCase();
+  const session = pageSessions.get(normalizedUrl);
+  if (session?.saveTimer) clearTimeout(session.saveTimer);
+  pageSessions.delete(normalizedUrl);
+};
 
 const clampOperation = (operation: CollaborativeOperation, contentLength: number): CollaborativeOperation => ({
   ...operation,
@@ -92,6 +121,7 @@ export const initSocket = (server: HttpServer) => {
       methods: ['GET', 'POST'],
     },
   });
+  ioInstance = io;
 
   io.on('connection', (socket) => {
     console.log('🔌 New client connected:', socket.id);
@@ -113,9 +143,29 @@ export const initSocket = (server: HttpServer) => {
       }
     });
 
-    socket.on('edit-page', (data: { customUrl: string; content: string }) => {
-      // Broadcast to all OTHER clients in the room
-      socket.to(data.customUrl.trim().toLowerCase()).emit('page-updated', data.content);
+    socket.on('edit-page', async (data: { customUrl: string; content: string }) => {
+      try {
+        const normalizedUrl = data.customUrl.trim().toLowerCase();
+        const page = await prisma.publishedPage.findUnique({
+          where: { customUrl: normalizedUrl },
+          select: { isEditable: true, isDeleted: true },
+        });
+
+        if (!page || page.isDeleted || !page.isEditable) {
+          socket.emit('collab-rejected', { message: 'This page cannot be edited' });
+          return;
+        }
+
+        updateSocketPageSession(normalizedUrl, data.content);
+        socket.to(normalizedUrl).emit('page-updated', data.content);
+
+        const session = await getPageSession(normalizedUrl);
+        if (session) {
+          schedulePersist(normalizedUrl, session);
+        }
+      } catch (error) {
+        console.error('Failed to apply edit-page:', error);
+      }
     });
 
     socket.on('collab-operation', async (operation: CollaborativeOperation) => {

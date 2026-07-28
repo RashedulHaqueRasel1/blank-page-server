@@ -12,10 +12,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initSocket = void 0;
+exports.initSocket = exports.clearSocketPageSession = exports.updateSocketPageSession = void 0;
 const socket_io_1 = require("socket.io");
 const prisma_1 = __importDefault(require("./lib/prisma"));
 const pageSessions = new Map();
+let ioInstance = null;
+const updateSocketPageSession = (customUrl, content) => {
+    const normalizedUrl = customUrl.trim().toLowerCase();
+    const session = pageSessions.get(normalizedUrl);
+    if (session) {
+        if (session.saveTimer)
+            clearTimeout(session.saveTimer);
+        session.content = content;
+        session.version += 1;
+        session.history = [];
+    }
+    else {
+        pageSessions.set(normalizedUrl, {
+            content,
+            version: 1,
+            history: [],
+        });
+    }
+    if (ioInstance) {
+        ioInstance.to(normalizedUrl).emit('page-updated', content);
+    }
+};
+exports.updateSocketPageSession = updateSocketPageSession;
+const clearSocketPageSession = (customUrl) => {
+    const normalizedUrl = customUrl.trim().toLowerCase();
+    const session = pageSessions.get(normalizedUrl);
+    if (session === null || session === void 0 ? void 0 : session.saveTimer)
+        clearTimeout(session.saveTimer);
+    pageSessions.delete(normalizedUrl);
+};
+exports.clearSocketPageSession = clearSocketPageSession;
 const clampOperation = (operation, contentLength) => (Object.assign(Object.assign({}, operation), { index: Math.max(0, Math.min(Number(operation.index) || 0, contentLength)), deleteCount: Math.max(0, Math.min(Number(operation.deleteCount) || 0, contentLength - Math.max(0, Number(operation.index) || 0))), insertText: String(operation.insertText || '') }));
 const applyOperation = (content, operation) => {
     const safeOperation = clampOperation(Object.assign(Object.assign({}, operation), { opId: '', customUrl: '', baseVersion: 0 }), content.length);
@@ -73,6 +104,7 @@ const initSocket = (server) => {
             methods: ['GET', 'POST'],
         },
     });
+    ioInstance = io;
     io.on('connection', (socket) => {
         console.log('🔌 New client connected:', socket.id);
         socket.on('join-page', (customUrl) => __awaiter(void 0, void 0, void 0, function* () {
@@ -91,10 +123,28 @@ const initSocket = (server) => {
                 console.error('Failed to initialize collaborative page session:', error);
             }
         }));
-        socket.on('edit-page', (data) => {
-            // Broadcast to all OTHER clients in the room
-            socket.to(data.customUrl.trim().toLowerCase()).emit('page-updated', data.content);
-        });
+        socket.on('edit-page', (data) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const normalizedUrl = data.customUrl.trim().toLowerCase();
+                const page = yield prisma_1.default.publishedPage.findUnique({
+                    where: { customUrl: normalizedUrl },
+                    select: { isEditable: true, isDeleted: true },
+                });
+                if (!page || page.isDeleted || !page.isEditable) {
+                    socket.emit('collab-rejected', { message: 'This page cannot be edited' });
+                    return;
+                }
+                (0, exports.updateSocketPageSession)(normalizedUrl, data.content);
+                socket.to(normalizedUrl).emit('page-updated', data.content);
+                const session = yield getPageSession(normalizedUrl);
+                if (session) {
+                    schedulePersist(normalizedUrl, session);
+                }
+            }
+            catch (error) {
+                console.error('Failed to apply edit-page:', error);
+            }
+        }));
         socket.on('collab-operation', (operation) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const normalizedUrl = operation.customUrl.trim().toLowerCase();
