@@ -99,44 +99,39 @@ const verifySubscriberEmail = async (email: string, code: string) => {
     throw new ApiError(404, 'Subscriber not found');
   }
 
-  if (subscriber.isVerified) {
-    if (subscriber.backupToken) {
-      return subscriber;
-    }
-
-    return prisma.subscriber.update({
-      where: { email: normalizedEmail },
-      data: { backupToken: crypto.randomBytes(32).toString('hex') },
-    });
-  }
-
+  // Single-Use Enforcement: If code was already used or not generated, reject immediately
   if (!subscriber.verificationCode || !subscriber.verificationExpiresAt) {
-    throw new ApiError(400, 'No verification code found. Please request a new code.');
+    throw new ApiError(400, 'This verification code has already been used or is invalid. Please request a new code.');
   }
 
+  // Expiry check
   if (subscriber.verificationExpiresAt < new Date()) {
     throw new ApiError(400, 'Verification code expired. Please request a new code.');
   }
 
+  // Code match check
   if (subscriber.verificationCode !== code.trim()) {
     throw new ApiError(400, 'Invalid verification code');
   }
 
+  // Mark as verified and immediately consume OTP code (Single-Use Only)
   const verifiedSubscriber = await prisma.subscriber.update({
     where: { email: normalizedEmail },
     data: {
       isVerified: true,
-      verifiedAt: new Date(),
-      verificationCode: null,
+      verifiedAt: subscriber.verifiedAt || new Date(),
+      verificationCode: null, // Instantly burn the code so it cannot be reused
       verificationExpiresAt: null,
-      backupToken: crypto.randomBytes(32).toString('hex'),
+      backupToken: subscriber.backupToken || crypto.randomBytes(32).toString('hex'),
     },
   });
 
-  // Send welcome/thank you email asynchronously
-  sendThankYouEmail(normalizedEmail).catch((err) =>
-    console.error('Failed to send thank you email on verification:', err)
-  );
+  // Send welcome email on first verification
+  if (!subscriber.isVerified) {
+    sendThankYouEmail(normalizedEmail).catch((err) =>
+      console.error('Failed to send thank you email on verification:', err)
+    );
+  }
 
   return verifiedSubscriber;
 };
