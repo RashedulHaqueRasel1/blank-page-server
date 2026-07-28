@@ -10,10 +10,10 @@
   },
   "scripts": {
     "test": "echo \"No tests configured yet\"",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc && node scripts/copy-client.js",
-    "start": "node dist/server.js",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+    "dev": "node init && ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "node init && tsc && node scripts/copy-client.js",
+    "start": "node init && node dist/server.js",
+    "start:dev": "node init && ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "keywords": [],
   "author": "",
