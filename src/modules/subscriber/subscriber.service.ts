@@ -1,5 +1,5 @@
 import prisma from '../../lib/prisma';
-import { sendVerificationEmail } from '../../utils/mailer';
+import { sendVerificationEmail, sendThankYouEmail } from '../../utils/mailer';
 import config from '../../config';
 import ApiError from '../../errors/ApiError';
 import crypto from 'crypto';
@@ -40,7 +40,8 @@ const fetchGeoLocation = async (ip: string, subscriberId: string) => {
 const subscribe = async (email: string, ip: string, userAgent: string) => {
   const normalizedEmail = email.trim().toLowerCase();
   const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-  const verificationExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+  const otpExpiryMs = (config.otp_expires_in_minutes || 5) * 60 * 1000;
+  const verificationExpiresAt = new Date(Date.now() + otpExpiryMs);
 
   // Check if email belongs to a registered user
   const registeredUser = await prisma.user.findUnique({ where: { email: normalizedEmail } });
@@ -132,8 +133,14 @@ const verifySubscriberEmail = async (email: string, code: string) => {
     },
   });
 
+  // Send welcome/thank you email asynchronously
+  sendThankYouEmail(normalizedEmail).catch((err) =>
+    console.error('Failed to send thank you email on verification:', err)
+  );
+
   return verifiedSubscriber;
 };
+
 
 const getOrCreateBackupToken = async (email: string) => {
   const normalizedEmail = email.trim().toLowerCase();
