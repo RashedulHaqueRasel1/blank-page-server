@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PublishService = void 0;
 const prisma_1 = __importDefault(require("../../lib/prisma"));
 const ApiError_1 = __importDefault(require("../../errors/ApiError"));
+const socket_1 = require("../../socket");
 // Strip HTML tags to get plain text
 const stripHtml = (html) => html.replace(/<[^>]*>/g, '').trim();
 // Compute a simple word-level diff between old and new content
@@ -61,6 +62,7 @@ const publishPage = (data) => __awaiter(void 0, void 0, void 0, function* () {
             isDeleted: false,
         },
     });
+    (0, socket_1.updateSocketPageSession)(newPage.customUrl, newPage.content);
     return newPage;
 });
 const getPageByUrl = (customUrl_1, viewerIp_1, ...args_1) => __awaiter(void 0, [customUrl_1, viewerIp_1, ...args_1], void 0, function* (customUrl, viewerIp, bypassPasswordProtection = false) {
@@ -149,6 +151,7 @@ const updatePageContent = (customUrl, content, editorIp) => __awaiter(void 0, vo
             editorLog: updatedEditorLog,
         },
     });
+    (0, socket_1.updateSocketPageSession)(updatedPage.customUrl, updatedPage.content);
     return updatedPage;
 });
 const softDeletePage = (customUrl) => __awaiter(void 0, void 0, void 0, function* () {
@@ -163,6 +166,7 @@ const softDeletePage = (customUrl) => __awaiter(void 0, void 0, void 0, function
         where: { id: page.id },
         data: { isDeleted: true },
     });
+    (0, socket_1.clearSocketPageSession)(updatedPage.customUrl);
     return updatedPage;
 });
 const getAllPagesAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -230,6 +234,7 @@ const updatePageByAuthor = (customUrl, authorId, updates, editorIp) => __awaiter
             authorEditsLog: [...currentAuthorEditsLog, stateChange],
         },
     });
+    (0, socket_1.updateSocketPageSession)(updatedPage.customUrl, updatedPage.content);
     return updatedPage;
 });
 const verifyPagePassword = (customUrl, passwordAttempt, viewerIp) => __awaiter(void 0, void 0, void 0, function* () {
